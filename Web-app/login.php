@@ -16,62 +16,6 @@ require_once '../Includes/config.php';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navigation Header -->
-    <header class="navbar">
-        <nav class="nav-container">
-            <div class="nav-brand">
-                <a href="index.html">
-                    <i class="fas fa-graduation-cap"></i>
-                    <span>StudentHub</span>
-                </a>
-            </div>
-
-            <ul class="nav-menu" id="nav-menu">
-                <li class="nav-item">
-                    <a href="index.html" class="nav-link">
-                        <i class="fas fa-home"></i>
-                        Home
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="login.html" class="nav-link active">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Login
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="register.html" class="nav-link">
-                        <i class="fas fa-user-plus"></i>
-                        Register
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="profile.html" class="nav-link">
-                        <i class="fas fa-user"></i>
-                        Profile
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="contact.html" class="nav-link">
-                        <i class="fas fa-envelope"></i>
-                        Contact
-                    </a>
-                </li>
-            </ul>
-
-            <div class="nav-actions">
-                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <div class="hamburger" id="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-        </nav>
-    </header>
-
     <!-- Main Content -->
     <main class="auth-main">
         <div class="auth-container">

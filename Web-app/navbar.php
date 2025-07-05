@@ -14,7 +14,7 @@
     <header class="navbar">
         <nav class="nav-container">
             <div class="nav-brand">
-                <a href="index.html">
+                <a href="index.php">
                     <i class="fas fa-graduation-cap"></i>
                     <span>StudentHub</span>
                 </a>
@@ -22,31 +22,31 @@
 
             <ul class="nav-menu" id="nav-menu">
                 <li class="nav-item">
-                    <a href="index.html" class="nav-link active">
+                    <a href="index.php" class="nav-link active">
                         <i class="fas fa-home"></i>
                         Home
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="login.html" class="nav-link">
+                    <a href="login.php" class="nav-link">
                         <i class="fas fa-sign-in-alt"></i>
                         Login
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="register.html" class="nav-link">
+                    <a href="register.php" class="nav-link">
                         <i class="fas fa-user-plus"></i>
                         Register
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="profile.html" class="nav-link">
+                    <a href="profile.php" class="nav-link">
                         <i class="fas fa-user"></i>
                         Profile
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="contact.html" class="nav-link">
+                    <a href="contact.php" class="nav-link">
                         <i class="fas fa-envelope"></i>
                         Contact
                     </a>
