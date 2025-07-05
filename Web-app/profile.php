@@ -1,0 +1,362 @@
+<?php
+include './navbar.php';
+require_once '../Includes/config.php';
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudentHub - Profile</title>
+    <link rel="stylesheet" href="../Styles/styles.css">
+    <link rel="stylesheet" href="../Styles/profile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Main Content -->
+    <main class="profile-main">
+        <div class="container">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-header-content">
+                    <div class="profile-avatar-section">
+                        <div class="profile-avatar">
+                            <img id="profile-avatar-img" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face" alt="Profile Avatar">
+                            <button class="avatar-upload-btn" onclick="triggerAvatarUpload()">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                            <input type="file" id="avatar-upload" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="profile-status">
+                            <span class="status-indicator online"></span>
+                            <span class="status-text">Online</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-info">
+                        <h1 class="profile-name" id="profile-name">John Doe</h1>
+                        <p class="profile-title" id="profile-title">Computer Science Student</p>
+                        <p class="profile-university" id="profile-university">Massachusetts Institute of Technology</p>
+                        <div class="profile-badges">
+                            <span class="badge badge-primary">Senior</span>
+                            <span class="badge badge-success">Verified</span>
+                            <span class="badge badge-info">Active</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-actions">
+                        <button class="btn btn-primary" onclick="editProfile()">
+                            <i class="fas fa-edit"></i>
+                            Edit Profile
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadProfile()">
+                            <i class="fas fa-download"></i>
+                            Download CV
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="profile-content">
+                <div class="profile-sidebar">
+                    <!-- Quick Stats -->
+                    <div class="profile-card">
+                        <h3>Quick Stats</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-value">156</div>
+                                    <div class="stat-label">Days Active</div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-value">3.8</div>
+                                    <div class="stat-label">GPA</div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-value">12</div>
+                                    <div class="stat-label">Courses</div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-value">28</div>
+                                    <div class="stat-label">Connections</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="profile-card">
+                        <h3>Contact Information</h3>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span id="contact-email">john.doe@student.mit.edu</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span id="contact-phone">+1 (555) 123-4567</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span id="contact-location">Cambridge, MA</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-birthday-cake"></i>
+                                <span id="contact-birthday">March 15, 2001</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Links -->
+                    <div class="profile-card">
+                        <h3>Social Links</h3>
+                        <div class="social-links">
+                            <a href="#" class="social-link">
+                                <i class="fab fa-linkedin"></i>
+                                <span>LinkedIn</span>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-github"></i>
+                                <span>GitHub</span>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-twitter"></i>
+                                <span>Twitter</span>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fas fa-globe"></i>
+                                <span>Portfolio</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-main-content">
+                    <!-- Academic Information -->
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <h3>Academic Information</h3>
+                            <button class="btn btn-sm btn-secondary" onclick="editAcademicInfo()">
+                                <i class="fas fa-edit"></i>
+                                Edit
+                            </button>
+                        </div>
+                        <div class="academic-info">
+                            <div class="info-row">
+                                <div class="info-item">
+                                    <label>Student ID</label>
+                                    <span id="student-id">MIT2024001</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Academic Year</label>
+                                    <span id="academic-year">Senior (4th Year)</span>
+                                </div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-item">
+                                    <label>Major</label>
+                                    <span id="major">Computer Science</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Minor</label>
+                                    <span id="minor">Mathematics</span>
+                                </div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-item">
+                                    <label>Expected Graduation</label>
+                                    <span id="graduation">May 2024</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Advisor</label>
+                                    <span id="advisor">Dr. Sarah Johnson</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bio Section -->
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <h3>About Me</h3>
+                            <button class="btn btn-sm btn-secondary" onclick="editBio()">
+                                <i class="fas fa-edit"></i>
+                                Edit
+                            </button>
+                        </div>
+                        <div class="bio-content">
+                            <p id="bio-text">
+                                I'm a passionate Computer Science student at MIT with a focus on artificial intelligence and machine learning.
+                                I enjoy working on innovative projects that solve real-world problems and am always eager to learn new technologies.
+                                In my free time, I contribute to open-source projects and participate in hackathons.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Skills -->
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <h3>Skills & Technologies</h3>
+                            <button class="btn btn-sm btn-secondary" onclick="editSkills()">
+                                <i class="fas fa-edit"></i>
+                                Edit
+                            </button>
+                        </div>
+                        <div class="skills-content">
+                            <div class="skills-category">
+                                <h4>Programming Languages</h4>
+                                <div class="skills-list">
+                                    <span class="skill-tag">Python</span>
+                                    <span class="skill-tag">JavaScript</span>
+                                    <span class="skill-tag">Java</span>
+                                    <span class="skill-tag">C++</span>
+                                    <span class="skill-tag">TypeScript</span>
+                                </div>
+                            </div>
+                            <div class="skills-category">
+                                <h4>Frameworks & Libraries</h4>
+                                <div class="skills-list">
+                                    <span class="skill-tag">React</span>
+                                    <span class="skill-tag">Node.js</span>
+                                    <span class="skill-tag">Django</span>
+                                    <span class="skill-tag">TensorFlow</span>
+                                    <span class="skill-tag">Express.js</span>
+                                </div>
+                            </div>
+                            <div class="skills-category">
+                                <h4>Tools & Platforms</h4>
+                                <div class="skills-list">
+                                    <span class="skill-tag">Git</span>
+                                    <span class="skill-tag">Docker</span>
+                                    <span class="skill-tag">AWS</span>
+                                    <span class="skill-tag">MongoDB</span>
+                                    <span class="skill-tag">PostgreSQL</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="profile-card">
+                        <h3>Recent Activity</h3>
+                        <div class="activity-feed">
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p><strong>Completed</strong> Advanced Machine Learning course</p>
+                                    <span class="activity-time">2 days ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p><strong>Submitted</strong> Final project for Web Development</p>
+                                    <span class="activity-time">1 week ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p><strong>Won</strong> 1st place in University Hackathon</p>
+                                    <span class="activity-time">2 weeks ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p><strong>Joined</strong> AI Research Group</p>
+                                    <span class="activity-time">1 month ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="edit-profile-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>Edit Profile</h3>
+                <button class="modal-close" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-profile-form" class="edit-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-first-name" class="form-label">First Name</label>
+                            <input type="text" id="edit-first-name" name="first_name" class="form-input" value="John">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-last-name" class="form-label">Last Name</label>
+                            <input type="text" id="edit-last-name" name="last_name" class="form-input" value="Doe">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-bio" class="form-label">Bio</label>
+                        <textarea id="edit-bio" name="bio" class="form-textarea" rows="4">I'm a passionate Computer Science student at MIT with a focus on artificial intelligence and machine learning.</textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-phone" class="form-label">Phone</label>
+                            <input type="tel" id="edit-phone" name="phone" class="form-input" value="+1 (555) 123-4567">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-location" class="form-label">Location</label>
+                            <input type="text" id="edit-location" name="location" class="form-input" value="Cambridge, MA">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-cancel">Cancel</button>
+                <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../Js/main.js"></script>
+    <script src="../Js/theme.js"></script>
+    <script src="../Js/profile.js"></script>
+</body>
+</html>
+
+
+<?php
+include './footer.php';
+?>

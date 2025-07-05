@@ -1,0 +1,334 @@
+<?php
+include './navbar.php';
+require_once '../Includes/config.php';
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudentHub - Register</title>
+    <link rel="stylesheet" href="../Styles/styles.css">
+    <link rel="stylesheet" href="../Styles/auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Main Content -->
+    <main class="auth-main">
+        <div class="auth-container">
+            <div class="auth-visual">
+                <div class="auth-visual-content">
+                    <h2>Join Our Community</h2>
+                    <p>Create your account and unlock access to powerful student management tools and features.</p>
+
+                    <div class="auth-features">
+                        <div class="auth-feature">
+                            <div class="auth-feature-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="auth-feature-content">
+                                <h4>Secure & Private</h4>
+                                <p>Your data is protected with industry-standard encryption</p>
+                            </div>
+                        </div>
+
+                        <div class="auth-feature">
+                            <div class="auth-feature-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <div class="auth-feature-content">
+                                <h4>Quick Setup</h4>
+                                <p>Get started in minutes with our streamlined process</p>
+                            </div>
+                        </div>
+
+                        <div class="auth-feature">
+                            <div class="auth-feature-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="auth-feature-content">
+                                <h4>Community Access</h4>
+                                <p>Connect with thousands of students worldwide</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="auth-form-section">
+                <div class="auth-form-container">
+                    <div class="auth-header">
+                        <h1>Create Account</h1>
+                        <p>Enter your information to create your StudentHub account</p>
+                    </div>
+
+                    <form class="auth-form" id="register-form" action="php/register.php" method="POST">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="first_name" class="form-label">
+                                    <i class="fas fa-user"></i>
+                                    First Name *
+                                </label>
+                                <input
+                                    type="text"
+                                    id="first_name"
+                                    name="first_name"
+                                    class="form-input"
+                                    required
+                                    placeholder="Enter your first name"
+                                    autocomplete="given-name"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="last_name" class="form-label">
+                                    <i class="fas fa-user"></i>
+                                    Last Name *
+                                </label>
+                                <input
+                                    type="text"
+                                    id="last_name"
+                                    name="last_name"
+                                    class="form-input"
+                                    required
+                                    placeholder="Enter your last name"
+                                    autocomplete="family-name"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope"></i>
+                                Email Address *
+                            </label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                class="form-input"
+                                required
+                                placeholder="Enter your email address"
+                                autocomplete="email"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="student_id" class="form-label">
+                                <i class="fas fa-id-card"></i>
+                                Student ID *
+                            </label>
+                            <input
+                                type="text"
+                                id="student_id"
+                                name="student_id"
+                                class="form-input"
+                                required
+                                placeholder="Enter your student ID"
+                                pattern="[A-Za-z0-9]{6,12}"
+                                title="Student ID should be 6-12 characters long"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="university" class="form-label">
+                                <i class="fas fa-university"></i>
+                                University *
+                            </label>
+                            <select id="university" name="university" class="form-select" required>
+                                <option value="">Select your university</option>
+                                <option value="Harvard University">Harvard University</option>
+                                <option value="Stanford University">Stanford University</option>
+                                <option value="MIT">Massachusetts Institute of Technology</option>
+                                <option value="Yale University">Yale University</option>
+                                <option value="Princeton University">Princeton University</option>
+                                <option value="Columbia University">Columbia University</option>
+                                <option value="University of Pennsylvania">University of Pennsylvania</option>
+                                <option value="Brown University">Brown University</option>
+                                <option value="Cornell University">Cornell University</option>
+                                <option value="Dartmouth College">Dartmouth College</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="major" class="form-label">
+                                <i class="fas fa-book"></i>
+                                Major/Field of Study *
+                            </label>
+                            <input
+                                type="text"
+                                id="major"
+                                name="major"
+                                class="form-input"
+                                required
+                                placeholder="e.g., Computer Science"
+                                list="majors"
+                            >
+                            <datalist id="majors">
+                                <option value="Computer Science">
+                                <option value="Engineering">
+                                <option value="Business Administration">
+                                <option value="Psychology">
+                                <option value="Biology">
+                                <option value="Mathematics">
+                                <option value="English Literature">
+                                <option value="Political Science">
+                                <option value="Economics">
+                                <option value="Chemistry">
+                                <option value="Physics">
+                                <option value="History">
+                                <option value="Art">
+                                <option value="Music">
+                                <option value="Philosophy">
+                            </datalist>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="year" class="form-label">
+                                    <i class="fas fa-calendar"></i>
+                                    Academic Year *
+                                </label>
+                                <select id="year" name="year" class="form-select" required>
+                                    <option value="">Select year</option>
+                                    <option value="Freshman">Freshman (1st Year)</option>
+                                    <option value="Sophomore">Sophomore (2nd Year)</option>
+                                    <option value="Junior">Junior (3rd Year)</option>
+                                    <option value="Senior">Senior (4th Year)</option>
+                                    <option value="Graduate">Graduate Student</option>
+                                    <option value="PhD">PhD Candidate</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phone" class="form-label">
+                                    <i class="fas fa-phone"></i>
+                                    Phone Number
+                                </label>
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    name="phone"
+                                    class="form-input"
+                                    placeholder="(555) 123-4567"
+                                    autocomplete="tel"
+                                    pattern="[\(\)\s\-\+\d]+"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock"></i>
+                                Password *
+                            </label>
+                            <div class="password-input-container">
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    class="form-input"
+                                    required
+                                    placeholder="Create a strong password"
+                                    minlength="8"
+                                    autocomplete="new-password"
+                                >
+                                <button type="button" class="password-toggle-btn" aria-label="Toggle password visibility">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-requirements">
+                                <small>Password must be at least 8 characters long</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm_password" class="form-label">
+                                <i class="fas fa-lock"></i>
+                                Confirm Password *
+                            </label>
+                            <div class="password-input-container">
+                                <input
+                                    type="password"
+                                    id="confirm_password"
+                                    name="confirm_password"
+                                    class="form-input"
+                                    required
+                                    placeholder="Confirm your password"
+                                    autocomplete="new-password"
+                                >
+                                <button type="button" class="password-toggle-btn" aria-label="Toggle password visibility">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="terms" name="terms" required>
+                                <label for="terms" class="checkbox-label">
+                                    I agree to the <a href="#" class="link">Terms of Service</a> and <a href="#" class="link">Privacy Policy</a> *
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="newsletter" name="newsletter">
+                                <label for="newsletter" class="checkbox-label">
+                                    Subscribe to our newsletter for updates and tips
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full">
+                            <i class="fas fa-user-plus"></i>
+                            Create Account
+                        </button>
+                    </form>
+
+                    <div class="auth-footer">
+                        <p>Already have an account? <a href="login.html" class="link">Sign in here</a></p>
+                    </div>
+
+                    <div class="auth-divider">
+                        <span>or</span>
+                    </div>
+
+                    <div class="social-auth">
+                        <button type="button" class="btn btn-social btn-google">
+                            <i class="fab fa-google"></i>
+                            Sign up with Google
+                        </button>
+                        <button type="button" class="btn btn-social btn-github">
+                            <i class="fab fa-github"></i>
+                            Sign up with GitHub
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Creating your account...</p>
+        </div>
+    </div>
+
+    <script src="../Js/main.js"></script>
+    <script src="../Js/theme.js"></script>
+    <script src="../Js/auth.js"></script>
+</body>
+</html>
+
+
+<?php
+include './footer.php';
+?>

@@ -1,0 +1,447 @@
+<?php
+include './navbar.php';
+require_once '../Includes/config.php';
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudentHub - Contact</title>
+    <link rel="stylesheet" href="../Styles/styles.css">
+    <link rel="stylesheet" href="../Styles/contact.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <nav class="nav-container">
+            <div class="nav-brand">
+                <a href="index.html">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>StudentHub</span>
+                </a>
+            </div>
+
+            <ul class="nav-menu" id="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="login.html" class="nav-link">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="register.html" class="nav-link">
+                        <i class="fas fa-user-plus"></i>
+                        Register
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="profile.html" class="nav-link">
+                        <i class="fas fa-user"></i>
+                        Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="contact.html" class="nav-link active">
+                        <i class="fas fa-envelope"></i>
+                        Contact
+                    </a>
+                </li>
+            </ul>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="contact-main">
+        <div class="container">
+            <!-- Contact Header -->
+            <div class="contact-header">
+                <h1>Get in Touch</h1>
+                <p>We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+            </div>
+
+            <div class="contact-content">
+                <!-- Contact Information -->
+                <div class="contact-info-section">
+                    <div class="contact-info-card">
+                        <h2>Contact Information</h2>
+                        <p>Reach out to us through any of these channels. We're here to help!</p>
+
+                        <div class="contact-methods">
+                            <div class="contact-method">
+                                <div class="contact-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h4>Email Support</h4>
+                                    <p>support@studenthub.com</p>
+                                    <span>We typically respond within 24 hours</span>
+                                </div>
+                            </div>
+
+                            <div class="contact-method">
+                                <div class="contact-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h4>Phone Support</h4>
+                                    <p>+1 (555) 123-4567</p>
+                                    <span>Monday - Friday, 9 AM - 6 PM EST</span>
+                                </div>
+                            </div>
+
+                            <div class="contact-method">
+                                <div class="contact-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h4>Office Address</h4>
+                                    <p>123 Education Street<br>Cambridge, MA 02139</p>
+                                    <span>Visit us during business hours</span>
+                                </div>
+                            </div>
+
+                            <div class="contact-method">
+                                <div class="contact-icon">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h4>Live Chat</h4>
+                                    <p>Available on our website</p>
+                                    <span>24/7 automated support</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="social-contact">
+                            <h4>Follow Us</h4>
+                            <div class="social-links">
+                                <a href="#" class="social-link" aria-label="Facebook">
+                                    <i class="fab fa-facebook"></i>
+                                </a>
+                                <a href="#" class="social-link" aria-label="Twitter">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                <a href="#" class="social-link" aria-label="LinkedIn">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                                <a href="#" class="social-link" aria-label="Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Section -->
+                    <div class="faq-section">
+                        <h3>Frequently Asked Questions</h3>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <button class="faq-question" onclick="toggleFAQ(this)">
+                                    <span>How do I reset my password?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>You can reset your password by clicking the "Forgot Password" link on the login page. We'll send you a reset link via email.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button class="faq-question" onclick="toggleFAQ(this)">
+                                    <span>How do I update my profile information?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>Navigate to your profile page and click the "Edit Profile" button. You can update your personal information, academic details, and more.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button class="faq-question" onclick="toggleFAQ(this)">
+                                    <span>Is my data secure on StudentHub?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>Yes, we use industry-standard encryption and security measures to protect your personal information. Your data is never shared with third parties without your consent.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="contact-form-section">
+                    <div class="contact-form-card">
+                        <div class="form-header">
+                            <h2>Send us a Message</h2>
+                            <p>Fill out the form below and we'll get back to you as soon as possible.</p>
+                        </div>
+
+                        <form class="contact-form" id="contact-form" action="php/contact.php" method="POST">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="first_name" class="form-label">
+                                        <i class="fas fa-user"></i>
+                                        First Name *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="first_name"
+                                        name="first_name"
+                                        class="form-input"
+                                        required
+                                        placeholder="Your first name"
+                                    >
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="last_name" class="form-label">
+                                        <i class="fas fa-user"></i>
+                                        Last Name *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="last_name"
+                                        name="last_name"
+                                        class="form-input"
+                                        required
+                                        placeholder="Your last name"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope"></i>
+                                    Email Address *
+                                </label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    class="form-input"
+                                    required
+                                    placeholder="your.email@example.com"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="subject" class="form-label">
+                                    <i class="fas fa-tag"></i>
+                                    Subject *
+                                </label>
+                                <select id="subject" name="subject" class="form-select" required>
+                                    <option value="">Select a subject</option>
+                                    <option value="general">General Inquiry</option>
+                                    <option value="technical">Technical Support</option>
+                                    <option value="account">Account Issues</option>
+                                    <option value="feature">Feature Request</option>
+                                    <option value="bug">Bug Report</option>
+                                    <option value="billing">Billing Question</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="priority" class="form-label">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    Priority Level
+                                </label>
+                                <select id="priority" name="priority" class="form-select">
+                                    <option value="low">Low - General question</option>
+                                    <option value="medium" selected>Medium - Standard inquiry</option>
+                                    <option value="high">High - Urgent issue</option>
+                                    <option value="critical">Critical - Service disruption</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="message" class="form-label">
+                                    <i class="fas fa-comment-alt"></i>
+                                    Message *
+                                </label>
+                                <textarea
+                                    id="message"
+                                    name="message"
+                                    class="form-textarea"
+                                    required
+                                    placeholder="Please describe your inquiry in detail..."
+                                    rows="6"
+                                    minlength="10"
+                                ></textarea>
+                                <div class="character-count">
+                                    <span id="char-count">0</span> / 1000 characters
+                                </div>
+                            </div>
+
+                            <!-- Rating Section -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-star"></i>
+                                    Rate Your Experience with StudentHub
+                                </label>
+                                <div class="rating-container">
+                                    <div class="star-rating" id="experience-rating">
+                                        <input type="radio" id="star5" name="experience_rating" value="5">
+                                        <label for="star5" class="star">
+                                            <i class="fas fa-star"></i>
+                                        </label>
+
+                                        <input type="radio" id="star4" name="experience_rating" value="4">
+                                        <label for="star4" class="star">
+                                            <i class="fas fa-star"></i>
+                                        </label>
+
+                                        <input type="radio" id="star3" name="experience_rating" value="3">
+                                        <label for="star3" class="star">
+                                            <i class="fas fa-star"></i>
+                                        </label>
+
+                                        <input type="radio" id="star2" name="experience_rating" value="2">
+                                        <label for="star2" class="star">
+                                            <i class="fas fa-star"></i>
+                                        </label>
+
+                                        <input type="radio" id="star1" name="experience_rating" value="1">
+                                        <label for="star1" class="star">
+                                            <i class="fas fa-star"></i>
+                                        </label>
+                                    </div>
+                                    <div class="rating-text" id="rating-text">Click to rate your experience</div>
+                                </div>
+                            </div>
+
+                            <!-- Service Rating -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    How likely are you to recommend StudentHub?
+                                </label>
+                                <div class="recommendation-rating">
+                                    <div class="rating-scale">
+                                        <div class="scale-labels">
+                                            <span>Not likely</span>
+                                            <span>Very likely</span>
+                                        </div>
+                                        <div class="scale-numbers">
+                                            <input type="radio" id="rec1" name="recommendation" value="1">
+                                            <label for="rec1">1</label>
+
+                                            <input type="radio" id="rec2" name="recommendation" value="2">
+                                            <label for="rec2">2</label>
+
+                                            <input type="radio" id="rec3" name="recommendation" value="3">
+                                            <label for="rec3">3</label>
+
+                                            <input type="radio" id="rec4" name="recommendation" value="4">
+                                            <label for="rec4">4</label>
+
+                                            <input type="radio" id="rec5" name="recommendation" value="5">
+                                            <label for="rec5">5</label>
+
+                                            <input type="radio" id="rec6" name="recommendation" value="6">
+                                            <label for="rec6">6</label>
+
+                                            <input type="radio" id="rec7" name="recommendation" value="7">
+                                            <label for="rec7">7</label>
+
+                                            <input type="radio" id="rec8" name="recommendation" value="8">
+                                            <label for="rec8">8</label>
+
+                                            <input type="radio" id="rec9" name="recommendation" value="9">
+                                            <label for="rec9">9</label>
+
+                                            <input type="radio" id="rec10" name="recommendation" value="10">
+                                            <label for="rec10">10</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="updates" name="updates">
+                                    <label for="updates" class="checkbox-label">
+                                        I would like to receive updates about new features and improvements
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="newsletter" name="newsletter">
+                                    <label for="newsletter" class="checkbox-label">
+                                        Subscribe to our monthly newsletter
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <i class="fas fa-paper-plane"></i>
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Success Modal -->
+    <div class="modal" id="success-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Message Sent Successfully!</h3>
+                <button class="modal-close" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="success-content">
+                    <div class="success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <p>Thank you for contacting us! We've received your message and will respond within 24 hours.</p>
+                    <div class="response-time">
+                        <i class="fas fa-clock"></i>
+                        <span>Expected response time: 2-24 hours</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary modal-ok">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../Js/main.js"></script>
+    <script src="../Js/theme.js"></script>
+    <script src="../Js/contact.js"></script>
+</body>
+</html>
+
+
+<?php
+include './footer.php';
+?>
