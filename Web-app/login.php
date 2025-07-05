@@ -122,11 +122,11 @@ require_once '../Includes/config.php';
                             <div class="checkbox-group">
                                 <input type="checkbox" id="remember" name="remember">
                                 <label for="remember" class="checkbox-label">
-                                    Remember me for 30 days
+                                    Remember me
                                 </label>
                             </div>
 
-                            <a href="#" class="link forgot-password">Forgot password?</a>
+                            <a href="pass_reset.php" class="link forgot-password">Forgot password?</a>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-full">
@@ -136,32 +136,7 @@ require_once '../Includes/config.php';
                     </form>
 
                     <div class="auth-footer">
-                        <p>Don't have an account? <a href="register.html" class="link">Create one here</a></p>
-                    </div>
-
-                    <div class="auth-divider">
-                        <span>or</span>
-                    </div>
-
-                    <div class="social-auth">
-                        <button type="button" class="btn btn-social btn-google">
-                            <i class="fab fa-google"></i>
-                            Continue with Google
-                        </button>
-                        <button type="button" class="btn btn-social btn-github">
-                            <i class="fab fa-github"></i>
-                            Continue with GitHub
-                        </button>
-                    </div>
-
-                    <div class="demo-credentials">
-                        <h4>Demo Credentials</h4>
-                        <p><strong>Email:</strong> demo@studenthub.com</p>
-                        <p><strong>Password:</strong> demo123456</p>
-                        <button type="button" class="btn btn-secondary" onclick="fillDemoCredentials()">
-                            <i class="fas fa-user"></i>
-                            Use Demo Account
-                        </button>
+                        <p>Don't have an account? <a href="register.php" class="link">Create one here</a></p>
                     </div>
                 </div>
             </div>

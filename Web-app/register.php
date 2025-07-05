@@ -276,15 +276,6 @@ require_once '../Includes/config.php';
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="newsletter" name="newsletter">
-                                <label for="newsletter" class="checkbox-label">
-                                    Subscribe to our newsletter for updates and tips
-                                </label>
-                            </div>
-                        </div>
-
                         <button type="submit" class="btn btn-primary btn-full">
                             <i class="fas fa-user-plus"></i>
                             Create Account
@@ -292,22 +283,7 @@ require_once '../Includes/config.php';
                     </form>
 
                     <div class="auth-footer">
-                        <p>Already have an account? <a href="login.html" class="link">Sign in here</a></p>
-                    </div>
-
-                    <div class="auth-divider">
-                        <span>or</span>
-                    </div>
-
-                    <div class="social-auth">
-                        <button type="button" class="btn btn-social btn-google">
-                            <i class="fab fa-google"></i>
-                            Sign up with Google
-                        </button>
-                        <button type="button" class="btn btn-social btn-github">
-                            <i class="fab fa-github"></i>
-                            Sign up with GitHub
-                        </button>
+                        <p>Already have an account? <a href="login.php" class="link">Sign in here</a></p>
                     </div>
                 </div>
             </div>
