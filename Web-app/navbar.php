@@ -40,19 +40,6 @@
                         Contact
                     </a>
                 </li>
-
-                                <li class="nav-item">
-                    <a href="login.php" class="nav-link">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Login
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="register.php" class="nav-link">
-                        <i class="fas fa-user-plus"></i>
-                        Register
-                    </a>
-                </li>
             </ul>
 
             <div class="nav-actions">
@@ -60,15 +47,20 @@
                     <i class="fas fa-moon"></i>
                 </button>
 
+                <a href="login.php" class="nav-link">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </a>
+                 <a href="logout.php" class="nav-link" style="transition: color 0.3s ease;" onmouseover="this.style.color='#dc3545'" onmouseout="this.style.color=''">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
                 
                 <div class="hamburger" id="hamburger">
                     <span></span>
                     <span></span>
                     <span></span>
                 </div>
-                
-
-                
             </div>
         </nav>
     </header>
