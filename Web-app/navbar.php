@@ -1,3 +1,9 @@
+<?php
+// Start the session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,12 +34,15 @@
                     </a>
                 </li>
 
+                <?php if(isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
                 <li class="nav-item">
                     <a href="profile.php" class="nav-link">
                         <i class="fas fa-user"></i>
                         Profile
                     </a>
                 </li>
+                <?php endif; ?>
+                
                 <li class="nav-item">
                     <a href="contact.php" class="nav-link">
                         <i class="fas fa-envelope"></i>
@@ -47,14 +56,26 @@
                     <i class="fas fa-moon"></i>
                 </button>
 
-                <a href="login.php" class="nav-link">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Login
-                </a>
-                 <a href="logout.php" class="nav-link" style="transition: color 0.3s ease;" onmouseover="this.style.color='#dc3545'" onmouseout="this.style.color=''">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </a>
+                <?php if(isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
+                    <div class="user-greeting">
+                        Welcome, <?php echo htmlspecialchars($_SESSION['first_name'] ?? 'User'); ?>
+                    </div>
+                    <a href="logout.php" class="nav-link logout-btn" 
+                       onmouseover="this.style.color='#dc3545'" 
+                       onmouseout="this.style.color=''">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                <?php else: ?>
+                    <a href="login.php" class="nav-link login-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login
+                    </a>
+                    <a href="register.php" class="nav-link register-btn">
+                        <i class="fas fa-user-plus"></i>
+                        Register
+                    </a>
+                <?php endif; ?>
                 
                 <div class="hamburger" id="hamburger">
                     <span></span>

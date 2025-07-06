@@ -1,4 +1,4 @@
-// ===== AUTHENTICATION JAVASCRIPT =====
+// auth.js
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize authentication functionality
@@ -11,9 +11,6 @@ function initializeAuth() {
 
     // Initialize form validation
     initializeAuthFormValidation();
-
-    // Initialize social auth buttons
-    initializeSocialAuth();
 
     // Initialize phone number formatting
     initializePhoneFormatting();
@@ -61,10 +58,10 @@ function initializeAuthFormValidation() {
 
     forms.forEach(form => {
         form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            if (validateAuthForm(this)) {
-                submitAuthForm(this);
+            if (!validateAuthForm(this)) {
+                e.preventDefault();
+            } else {
+                showLoadingOverlay('Creating your account...');
             }
         });
 
@@ -203,22 +200,8 @@ function validatePassword(password) {
         };
     }
 
-    // Additional password strength checks
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasNumbers = /\d/.test(password);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-    let strength = 0;
-    if (hasUpperCase) strength++;
-    if (hasLowerCase) strength++;
-    if (hasNumbers) strength++;
-    if (hasSpecialChar) strength++;
-
-    // For this assignment, we'll keep it simple - just length requirement
     return {
         isValid: true,
-        strength: strength,
         message: 'Password meets requirements.'
     };
 }
@@ -252,7 +235,7 @@ function validateRegistrationSpecific(form) {
     // Check terms agreement
     const termsCheckbox = form.querySelector('input[name="terms"]');
     if (termsCheckbox && !termsCheckbox.checked) {
-        showNotification('Please agree to the Terms of Service and Privacy Policy.', 'error');
+        showAuthFieldError(termsCheckbox, 'You must agree to the Terms of Service and Privacy Policy.');
         isValid = false;
     }
 
@@ -310,77 +293,6 @@ function getFieldDisplayName(field) {
     return field.name || 'Field';
 }
 
-// ===== FORM SUBMISSION =====
-function submitAuthForm(form) {
-    const formData = new FormData(form);
-    const isRegistration = form.id === 'register-form';
-
-    // Show loading state
-    showLoadingOverlay(isRegistration ? 'Creating your account...' : 'Signing you in...');
-
-    // Simulate form submission (replace with actual PHP endpoint)
-    setTimeout(() => {
-        hideLoadingOverlay();
-
-        if (isRegistration) {
-            handleRegistrationSuccess();
-        } else {
-            handleLoginSuccess();
-        }
-    }, 2000);
-
-    // In real implementation, you would do:
-    /*
-    fetch(form.action, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        hideLoadingOverlay();
-        if (data.success) {
-            if (isRegistration) {
-                handleRegistrationSuccess();
-            } else {
-                handleLoginSuccess();
-            }
-        } else {
-            showNotification(data.message || 'An error occurred. Please try again.', 'error');
-        }
-    })
-    .catch(error => {
-        hideLoadingOverlay();
-        showNotification('Network error. Please check your connection and try again.', 'error');
-    });
-    */
-}
-
-function handleRegistrationSuccess() {
-    showModal(
-        'Account Created Successfully!',
-        'Welcome to StudentHub! Your account has been created. You can now log in and start using all our features.',
-        'success'
-    );
-
-    // Redirect to login page after modal is closed
-    setTimeout(() => {
-        window.location.href = 'login.php';
-    }, 3000);
-}
-
-function handleLoginSuccess() {
-    showModal(
-        'Welcome Back!',
-        'You have successfully logged in. Redirecting to your profile...',
-        'success'
-    );
-
-    // Redirect to profile page
-    setTimeout(() => {
-        window.location.href = 'profile.php';
-    }, 2000);
-}
-
 // ===== LOADING OVERLAY =====
 function showLoadingOverlay(message = 'Loading...') {
     const overlay = document.getElementById('loading-overlay');
@@ -398,33 +310,6 @@ function hideLoadingOverlay() {
     if (overlay) {
         overlay.classList.remove('show');
     }
-}
-
-// ===== SOCIAL AUTHENTICATION =====
-function initializeSocialAuth() {
-    const googleBtn = document.querySelector('.btn-google');
-    const githubBtn = document.querySelector('.btn-github');
-
-    if (googleBtn) {
-        googleBtn.addEventListener('click', function() {
-            handleSocialAuth('google');
-        });
-    }
-
-    if (githubBtn) {
-        githubBtn.addEventListener('click', function() {
-            handleSocialAuth('github');
-        });
-    }
-}
-
-function handleSocialAuth(provider) {
-    showNotification(`${provider.charAt(0).toUpperCase() + provider.slice(1)} authentication would be implemented here.`, 'info');
-
-    // In real implementation:
-    /*
-    window.location.href = `/auth/${provider}`;
-    */
 }
 
 // ===== PHONE NUMBER FORMATTING =====
@@ -510,33 +395,3 @@ function initializeFormAnimations() {
         });
     });
 }
-
-// ===== UTILITY FUNCTIONS =====
-function getFormData(form) {
-    const formData = new FormData(form);
-    const data = {};
-
-    for (let [key, value] of formData.entries()) {
-        data[key] = value;
-    }
-
-    return data;
-}
-
-function validateFormData(data, requiredFields) {
-    const errors = [];
-
-    requiredFields.forEach(field => {
-        if (!data[field] || data[field].trim() === '') {
-            errors.push(`${field} is required`);
-        }
-    });
-
-    return errors;
-}
-
-// ===== EXPORT FUNCTIONS =====
-window.validateAuthForm = validateAuthForm;
-window.submitAuthForm = submitAuthForm;
-window.showLoadingOverlay = showLoadingOverlay;
-window.hideLoadingOverlay = hideLoadingOverlay;
