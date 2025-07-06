@@ -2,7 +2,9 @@
 include './navbar.php';
 
 // Initialize the session
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if(isset($_SESSION['registration_success'])) {
     echo '<div class="alert alert-success">Registration successful! Please log in.</div>';
