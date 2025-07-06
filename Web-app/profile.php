@@ -1,4 +1,7 @@
 <?php
+// Start session at the very beginning
+session_start();
+
 include './navbar.php';
 require_once '../Includes/config.php';
 
@@ -6,23 +9,34 @@ require_once '../Includes/config.php';
 $error = '';
 $success = '';
 
-/*
-// Check if user is logged in (you should have session management)
-session_start();
+// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
 $user_id = $_SESSION['user_id'];
-*/
 
-$user_id = 1;
-// Fetch user data
-$user = [];
-$profile = [];
-$skills = [];
-$social_links = [];
+// Verify database connection exists
+if (!isset($pdo)) {
+    die("Database connection not established");
+}
+
+// Function to categorize skills for display
+function categorizeSkills($skills) {
+    $categorized = [
+        'Programming Language' => [],
+        'Framework' => [],
+        'Tool' => [],
+        'Other' => []
+    ];
+    
+    foreach ($skills as $skill) {
+        $categorized[$skill['skill_category']][] = $skill['skill_name'];
+    }
+    
+    return $categorized;
+}
 
 // READ operation - Fetch user data
 try {
@@ -59,12 +73,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // UPDATE profile information
     if (isset($_POST['update_profile'])) {
         try {
-            $first_name = $_POST['first_name'];
-            $last_name = $_POST['last_name'];
-            $phone = $_POST['phone'];
-            $location = $_POST['location'];
-            $birthday = $_POST['date_of_birth'];
-            $bio = $_POST['bio'];
+            // Sanitize inputs
+            $first_name = sanitizeInput($_POST['first_name']);
+            $last_name = sanitizeInput($_POST['last_name']);
+            $phone = sanitizeInput($_POST['phone']);
+            $location = sanitizeInput($_POST['location']);
+            $birthday = sanitizeInput($_POST['date_of_birth']);
+            $bio = sanitizeInput($_POST['bio']);
+            
+            // Validate required fields
+            if (empty($first_name) || empty($last_name)) {
+                throw new Exception("First name and last name are required");
+            }
             
             // Update users table
             $stmt = $pdo->prepare("UPDATE users SET first_name = ?, last_name = ?, phone = ? WHERE user_id = ?");
@@ -79,8 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->execute([$user_id, $bio, $location, $birthday]);
             }
             
-            $success = "Profile updated successfully!";
-            // Refresh the page to show updated data
+            $_SESSION['success'] = "Profile updated successfully!";
             header("Location: profile.php");
             exit();
             
@@ -96,30 +115,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $pdo->prepare("DELETE FROM skills WHERE user_id = ?");
             $stmt->execute([$user_id]);
             
-            // Add new skills
+            // Process programming skills
             if (!empty($_POST['programming_skills'])) {
                 foreach ($_POST['programming_skills'] as $skill) {
-                    $stmt = $pdo->prepare("INSERT INTO skills (user_id, skill_name, skill_category) VALUES (?, ?, 'Programming Language')");
-                    $stmt->execute([$user_id, $skill]);
+                    $clean_skill = sanitizeInput($skill);
+                    if (!empty($clean_skill)) {
+                        $stmt = $pdo->prepare("INSERT INTO skills (user_id, skill_name, skill_category) VALUES (?, ?, 'Programming Language')");
+                        $stmt->execute([$user_id, $clean_skill]);
+                    }
                 }
             }
             
+            // Process framework skills
             if (!empty($_POST['framework_skills'])) {
                 foreach ($_POST['framework_skills'] as $skill) {
-                    $stmt = $pdo->prepare("INSERT INTO skills (user_id, skill_name, skill_category) VALUES (?, ?, 'Framework')");
-                    $stmt->execute([$user_id, $skill]);
+                    $clean_skill = sanitizeInput($skill);
+                    if (!empty($clean_skill)) {
+                        $stmt = $pdo->prepare("INSERT INTO skills (user_id, skill_name, skill_category) VALUES (?, ?, 'Framework')");
+                        $stmt->execute([$user_id, $clean_skill]);
+                    }
                 }
             }
             
+            // Process tool skills
             if (!empty($_POST['tool_skills'])) {
                 foreach ($_POST['tool_skills'] as $skill) {
-                    $stmt = $pdo->prepare("INSERT INTO skills (user_id, skill_name, skill_category) VALUES (?, ?, 'Tool')");
-                    $stmt->execute([$user_id, $skill]);
+                    $clean_skill = sanitizeInput($skill);
+                    if (!empty($clean_skill)) {
+                        $stmt = $pdo->prepare("INSERT INTO skills (user_id, skill_name, skill_category) VALUES (?, ?, 'Tool')");
+                        $stmt->execute([$user_id, $clean_skill]);
+                    }
                 }
             }
             
-            $success = "Skills updated successfully!";
-            // Refresh the page to show updated data
+            $_SESSION['success'] = "Skills updated successfully!";
             header("Location: profile.php");
             exit();
             
@@ -129,20 +158,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Function to categorize skills for display
-function categorizeSkills($skills) {
-    $categorized = [
-        'Programming Language' => [],
-        'Framework' => [],
-        'Tool' => [],
-        'Other' => []
-    ];
-    
-    foreach ($skills as $skill) {
-        $categorized[$skill['skill_category']][] = $skill['skill_name'];
-    }
-    
-    return $categorized;
+// Check for success message from session
+if (isset($_SESSION['success'])) {
+    $success = $_SESSION['success'];
+    unset($_SESSION['success']);
 }
 
 $categorized_skills = categorizeSkills($skills);

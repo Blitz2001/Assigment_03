@@ -55,4 +55,14 @@ function redirectWithMessage($url, $type, $message) {
     header("Location: $url");
     exit();
 }
+
+function redirect($url) {
+    header("Location: $url");
+    exit();
+}
+
+
+function sanitizeInput($data) {
+    return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
+}
 ?>
