@@ -1,8 +1,96 @@
 <?php
 include './navbar.php';
-require_once '../Includes/config.php';
-?>
 
+// Initialize the session
+session_start();
+
+if(isset($_SESSION['registration_success'])) {
+    echo '<div class="alert alert-success">Registration successful! Please log in.</div>';
+    unset($_SESSION['registration_success']);
+}
+
+// Include config file
+require_once '../Includes/config.php';
+
+// Define variables and initialize with empty values
+$email = $password = "";
+$email_err = $password_err = $login_err = "";
+
+// Processing form data when form is submitted
+if($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    // Check if email is empty
+    if(empty(trim($_POST["email"]))) {
+        $email_err = "Please enter your email.";
+    } else {
+        $email = trim($_POST["email"]);
+    }
+
+    // Check if password is empty
+    if(empty(trim($_POST["password"]))) {
+        $password_err = "Please enter your password.";
+    } else {
+        $password = trim($_POST["password"]);
+    }
+
+    // Validate credentials
+    if(empty($email_err) && empty($password_err)) {
+        // Prepare a select statement
+        $sql = "SELECT user_id, first_name, last_name, email, password_hash FROM users WHERE email = ?";
+        
+        if($stmt = $conn->prepare($sql)) {
+            // Bind variables to the prepared statement as parameters
+            $stmt->bind_param("s", $param_email);
+            
+            // Set parameters
+            $param_email = $email;
+            
+            // Attempt to execute the prepared statement
+            if($stmt->execute()) {
+                // Store result
+                $stmt->store_result();
+                
+                // Check if email exists, if yes then verify password
+                if($stmt->num_rows == 1) {                    
+                    // Bind result variables
+                    $stmt->bind_result($id, $first_name, $last_name, $email, $hashed_password);
+                    if($stmt->fetch()) {
+                        if(password_verify($password, $hashed_password)) {
+                            // Password is correct, so start a new session
+                            session_regenerate_id();
+                            
+                            // Store data in session variables
+                            $_SESSION["loggedin"] = true;
+                            $_SESSION["user_id"] = $id;
+                            $_SESSION["email"] = $email;                            
+                            $_SESSION["first_name"] = $first_name;
+                            $_SESSION["last_name"] = $last_name;
+                            
+                            // Redirect user to profile page
+                            header("location: profile.php");
+                            exit();
+                        } else {
+                            // Password is not valid, display a generic error message
+                            $login_err = "Invalid email or password.";
+                        }
+                    }
+                } else {
+                    // Email doesn't exist, display a generic error message
+                    $login_err = "Invalid email or password.";
+                }
+            } else {
+                echo "Oops! Something went wrong. Please try again later.";
+            }
+
+            // Close statement
+            $stmt->close();
+        }
+    }
+    
+    // Close connection
+    $conn->close();
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -80,60 +168,63 @@ require_once '../Includes/config.php';
                         <p>Enter your credentials to access your account</p>
                     </div>
 
-                    <form class="auth-form" id="login-form" action="php/login.php" method="POST">
-                        <div class="form-group">
-                            <label for="email" class="form-label">
-                                <i class="fas fa-envelope"></i>
-                                Email Address *
-                            </label>
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                class="form-input"
-                                required
-                                placeholder="Enter your email address"
-                                autocomplete="email"
-                            >
-                        </div>
-
-                        <div class="form-group">
-                            <label for="password" class="form-label">
-                                <i class="fas fa-lock"></i>
-                                Password *
-                            </label>
-                            <div class="password-input-container">
-                                <input
-                                    type="password"
-                                    id="password"
-                                    name="password"
-                                    class="form-input"
-                                    required
-                                    placeholder="Enter your password"
-                                    autocomplete="current-password"
-                                >
-                                <button type="button" class="password-toggle-btn" aria-label="Toggle password visibility">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="form-options">
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="remember" name="remember">
-                                <label for="remember" class="checkbox-label">
-                                    Remember me
+                        <form class="auth-form" id="login-form" action="login.php" method="POST">
+                            <!-- Display login errors if any -->
+                            <?php 
+                            if(!empty($login_err)) {
+                                echo '<div class="alert alert-danger">' . $login_err . '</div>';
+                            }
+                            ?>
+                            
+                            <div class="form-group">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope"></i>
+                                    Email Address *
                                 </label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    class="form-input <?php echo (!empty($email_err)) ? 'is-invalid' : ''; ?>"
+                                    required
+                                    placeholder="Enter your email address"
+                                    autocomplete="email"
+                                    value="<?php echo $email; ?>"
+                                >
+                                <span class="invalid-feedback"><?php echo $email_err; ?></span>
                             </div>
 
-                            <a href="pass_reset.php" class="link forgot-password">Forgot password?</a>
-                        </div>
+                            <div class="form-group">
+                                <label for="password" class="form-label">
+                                    <i class="fas fa-lock"></i>
+                                    Password *
+                                </label>
+                                <div class="password-input-container">
+                                    <input
+                                        type="password"
+                                        id="password"
+                                        name="password"
+                                        class="form-input <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>"
+                                        required
+                                        placeholder="Enter your password"
+                                        autocomplete="current-password"
+                                    >
+                                    <button type="button" class="password-toggle-btn" aria-label="Toggle password visibility">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <span class="invalid-feedback"><?php echo $password_err; ?></span>
+                                </div>
+                            </div>
 
-                        <button type="submit" class="btn btn-primary btn-full">
-                            <i class="fas fa-sign-in-alt"></i>
-                            Sign In
-                        </button>
-                    </form>
+                            <div class="form-options">
+                                <a href="pass_reset.php" class="link forgot-password">Forgot password?</a>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Sign In
+                            </button>
+                        </form>
 
                     <div class="auth-footer">
                         <p>Don't have an account? <a href="register.php" class="link">Create one here</a></p>
@@ -188,13 +279,6 @@ require_once '../Includes/config.php';
     <script src="../Js/theme.js"></script>
     <script src="../Js/auth.js"></script>
     <script>
-        // Demo credentials functionality
-        function fillDemoCredentials() {
-            document.getElementById('email').value = 'demo@studenthub.com';
-            document.getElementById('password').value = 'demo123456';
-            showNotification('Demo credentials filled. You can now sign in.', 'info');
-        }
-
         // Forgot password functionality
         document.addEventListener('DOMContentLoaded', function() {
             const forgotPasswordLink = document.querySelector('.forgot-password');
