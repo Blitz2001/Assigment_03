@@ -405,6 +405,15 @@
     color: #10b981;
 }
 
+.modal {
+    display: none;
+    /* other styles */
+}
+
+.modal.active {
+    display: flex;
+}
+
 /* Add subtle separator lines */
 .social-link:not(:last-child)::after {
     content: '';

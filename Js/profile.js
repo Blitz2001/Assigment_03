@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Check if user is logged in
     checkAuthStatus();
+
+    // Attach event listeners to buttons
+    attachButtonHandlers();
 });
 
 // ===== AUTHENTICATION CHECK =====
@@ -29,6 +32,57 @@ function checkAuthStatus() {
 
     // Load user profile data
     loadProfileData();
+}
+
+// ===== BUTTON HANDLERS =====
+function attachButtonHandlers() {
+    // Edit Profile Button
+    const editProfileBtn = document.querySelector('.js-edit-profile');
+    if (editProfileBtn) {
+        editProfileBtn.addEventListener('click', editProfile);
+    }
+
+    // Edit Skills Button
+    const editSkillsBtn = document.querySelector('.js-edit-skills');
+    if (editSkillsBtn) {
+        editSkillsBtn.addEventListener('click', editSkills);
+    }
+
+    // Edit Academic Button
+    const editAcademicBtn = document.querySelector('.js-edit-academic');
+    if (editAcademicBtn) {
+        editAcademicBtn.addEventListener('click', editAcademicInfo);
+    }
+
+    // Edit Bio Button
+    const editBioBtn = document.querySelector('.js-edit-bio');
+    if (editBioBtn) {
+        editBioBtn.addEventListener('click', editBio);
+    }
+
+    // Save Profile Button
+    const saveProfileBtn = document.querySelector('.js-save-profile');
+    if (saveProfileBtn) {
+        saveProfileBtn.addEventListener('click', saveProfile);
+    }
+
+    // Save Skills Button
+    const saveSkillsBtn = document.querySelector('.js-save-skills');
+    if (saveSkillsBtn) {
+        saveSkillsBtn.addEventListener('click', saveSkills);
+    }
+
+    // Download Profile Button
+    const downloadProfileBtn = document.querySelector('.js-download-profile');
+    if (downloadProfileBtn) {
+        downloadProfileBtn.addEventListener('click', downloadProfile);
+    }
+
+    // Logout Button
+    const logoutBtn = document.querySelector('.js-logout');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
 }
 
 // ===== PROFILE INITIALIZATION =====
@@ -196,37 +250,22 @@ function handleAvatarUpload(event) {
 
 // ===== EDIT FUNCTIONALITY =====
 function initializeEditModals() {
-    // Profile modal close buttons
-    const editModal = document.getElementById('edit-profile-modal');
-    if (editModal) {
-        const closeButtons = editModal.querySelectorAll('.modal-close, .modal-cancel, .modal-backdrop');
-        closeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                editModal.classList.remove('active');
-            });
+    // Close buttons for all modals
+    document.querySelectorAll('.modal-close, .modal-cancel, .modal-backdrop').forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
         });
+    });
 
-        // Prevent modal from closing when clicking inside
-        editModal.querySelector('.modal-content').addEventListener('click', function(e) {
+    // Prevent modal content from closing when clicking inside
+    document.querySelectorAll('.modal-content').forEach(content => {
+        content.addEventListener('click', function(e) {
             e.stopPropagation();
         });
-    }
-
-    // Skills modal close buttons
-    const skillsModal = document.getElementById('edit-skills-modal');
-    if (skillsModal) {
-        const closeButtons = skillsModal.querySelectorAll('.modal-close, .modal-cancel, .modal-backdrop');
-        closeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                skillsModal.classList.remove('active');
-            });
-        });
-
-        // Prevent modal from closing when clicking inside
-        skillsModal.querySelector('.modal-content').addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-    }
+    });
 }
 
 // PROFILE EDIT FUNCTIONS
@@ -253,12 +292,12 @@ function saveProfile() {
     const profileData = JSON.parse(localStorage.getItem('profile_data') || '{}');
 
     // Update with form data
-    profileData.firstName = formData.get('first_name');
-    profileData.lastName = formData.get('last_name');
-    profileData.bio = formData.get('bio');
-    profileData.phone = formData.get('phone');
-    profileData.location = formData.get('location');
-    profileData.birthday = formData.get('date_of_birth');
+    profileData.firstName = formData.get('first_name') || profileData.firstName;
+    profileData.lastName = formData.get('last_name') || profileData.lastName;
+    profileData.bio = formData.get('bio') || profileData.bio;
+    profileData.phone = formData.get('phone') || profileData.phone;
+    profileData.location = formData.get('location') || profileData.location;
+    profileData.birthday = formData.get('date_of_birth') || profileData.birthday;
 
     // Save updated data
     localStorage.setItem('profile_data', JSON.stringify(profileData));
@@ -366,21 +405,27 @@ function saveSkills() {
 function updateSkillsDisplay(programming, frameworks, tools) {
     // Update programming languages
     const programmingContainer = document.querySelector('.skills-category:nth-child(1) .skills-list');
-    programmingContainer.innerHTML = programming.map(skill => 
-        `<span class="skill-tag">${skill}</span>`
-    ).join('');
+    if (programmingContainer) {
+        programmingContainer.innerHTML = programming.map(skill => 
+            `<span class="skill-tag">${skill}</span>`
+        ).join('');
+    }
 
     // Update frameworks
     const frameworksContainer = document.querySelector('.skills-category:nth-child(2) .skills-list');
-    frameworksContainer.innerHTML = frameworks.map(skill => 
-        `<span class="skill-tag">${skill}</span>`
-    ).join('');
+    if (frameworksContainer) {
+        frameworksContainer.innerHTML = frameworks.map(skill => 
+            `<span class="skill-tag">${skill}</span>`
+        ).join('');
+    }
 
     // Update tools
     const toolsContainer = document.querySelector('.skills-category:nth-child(3) .skills-list');
-    toolsContainer.innerHTML = tools.map(skill => 
-        `<span class="skill-tag">${skill}</span>`
-    ).join('');
+    if (toolsContainer) {
+        toolsContainer.innerHTML = tools.map(skill => 
+            `<span class="skill-tag">${skill}</span>`
+        ).join('');
+    }
 }
 
 // ===== SPECIFIC EDIT FUNCTIONS =====
@@ -394,7 +439,6 @@ function editAcademicInfo() {
 
 function editBio() {
     const currentBio = document.getElementById('bio-text').textContent;
-
     const newBio = prompt('Edit your bio:', currentBio);
 
     if (newBio !== null && newBio.trim() !== '') {
