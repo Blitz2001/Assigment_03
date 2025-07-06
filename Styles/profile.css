@@ -335,32 +335,128 @@
 }
 
 /* Social Links */
+
 .social-links {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-sm);
+    gap: 0;
 }
 
 .social-link {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
+    gap: 12px;
+    padding: 16px 12px;
     text-decoration: none;
-    color: var(--text-secondary);
+    color: #64748b;
+    font-weight: 500;
+    font-size: 14px;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    background: none;
+    border-radius: 0;
+    border-left: 2px solid transparent;
 }
 
 .social-link:hover {
-    background: var(--bg-secondary);
-    color: var(--primary-600);
-    transform: translateX(5px);
+    color: #1e293b;
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0.02) 100%);
+    border-left-color: #3b82f6;
+    transform: translateX(4px);
 }
 
 .social-link i {
-    width: 20px;
-    text-align: center;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #9ca3af;
+    transition: all 0.3s ease;
+}
+
+.social-link:hover i {
+    color: #3b82f6;
+    transform: scale(1.1);
+}
+
+.social-link span {
+    color: inherit;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+/* Specific hover effects for each platform */
+.social-link:hover .fa-linkedin {
+    color: #0077B5;
+}
+
+.social-link:hover .fa-github {
+    color: #24292e;
+}
+
+.social-link:hover .fa-twitter {
+    color: #1DA1F2;
+}
+
+.social-link:hover .fa-globe {
+    color: #10b981;
+}
+
+/* Add subtle separator lines */
+.social-link:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 12px;
+    right: 12px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(226, 232, 240, 0.8) 0%, rgba(226, 232, 240, 0) 100%);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .social-link {
+        color: #94a3b8;
+    }
+    
+    .social-link:hover {
+        color: #f1f5f9;
+        background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+    }
+    
+    .social-link i {
+        color: #64748b;
+    }
+    
+    .social-link:not(:last-child)::after {
+        background: linear-gradient(90deg, rgba(51, 65, 85, 0.8) 0%, rgba(51, 65, 85, 0) 100%);
+    }
+}
+
+/* Optional: Add a modern glassmorphism effect */
+.profile-card .social-links {
+    padding: 8px 0;
+}
+
+.social-links::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border-radius: 12px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.profile-card:hover .social-links::before {
+    opacity: 1;
 }
 
 /* Academic Information */
@@ -510,6 +606,781 @@
 .modal-large .modal-content {
     max-width: 700px;
 }
+
+
+/* ===== MODAL STYLES ===== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: var(--spacing-xl);
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.8) 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+}
+
+.modal-content {
+    position: relative;
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 24px;
+    box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.25),
+        0 10px 20px -8px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+    width: 100%;
+    max-width: 650px;
+    max-height: 90vh;
+    overflow: hidden;
+    z-index: 2001;
+    animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-large .modal-content {
+    max-width: 800px;
+}
+
+.modal-header {
+    padding: 32px 32px 24px 32px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="1" fill="white" opacity="0.1"/><circle cx="40" cy="80" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+}
+
+.modal-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(4px);
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.modal-body {
+    padding: 40px 32px 32px 32px;
+    background: white;
+    position: relative;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.modal-body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 2px;
+}
+
+.modal-footer {
+    padding: 24px 32px 32px 32px;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Enhanced Form Styles */
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.form-input,
+.form-textarea {
+    padding: 16px 20px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: white;
+    color: #374151;
+    font-family: inherit;
+    position: relative;
+    z-index: 1;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 
+        0 0 0 4px rgba(102, 126, 234, 0.1),
+        0 4px 12px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+    color: #9ca3af;
+    opacity: 1;
+}
+
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+/* Special styling for date input */
+.form-input[type="date"] {
+    background: white;
+    cursor: pointer;
+    position: relative;
+}
+
+.form-input[type="date"]::-webkit-calendar-picker-indicator {
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="%23667eea" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.89-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.11-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>') no-repeat center;
+    background-size: 20px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin-right: 8px;
+}
+
+/* Enhanced Button Styles */
+.modal-footer .btn {
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    min-width: 120px;
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-footer .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.modal-footer .btn:hover::before {
+    left: 100%;
+}
+
+.modal-footer .btn-secondary {
+    background: #6b7280;
+    color: white;
+    border: 2px solid transparent;
+}
+
+.modal-footer .btn-secondary:hover {
+    background: #4b5563;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(107, 114, 128, 0.3);
+}
+
+.modal-footer .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: 2px solid transparent;
+}
+
+.modal-footer .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+/* Animation Keyframes */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-40px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .modal {
+        padding: var(--spacing-md);
+    }
+    
+    .modal-content {
+        max-width: 100%;
+        margin: 0;
+        border-radius: 20px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+    
+    .modal-header h3 {
+        font-size: 24px;
+    }
+    
+    .modal-footer {
+        flex-direction: column-reverse;
+        gap: 12px;
+    }
+    
+    .modal-footer .btn {
+        width: 100%;
+    }
+}
+
+/* Dark mode support */
+[data-theme="dark"] .modal-content {
+    background: linear-gradient(145deg, #1f2937 0%, #111827 100%);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .modal-body {
+    background: #1f2937;
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .modal-footer {
+    background: #111827;
+    border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .form-label {
+    color: #f3f4f6;
+}
+
+[data-theme="dark"] .form-input,
+[data-theme="dark"] .form-textarea {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .form-input:focus,
+[data-theme="dark"] .form-textarea:focus {
+    border-color: #667eea;
+    background: #374151;
+}
+
+/* Smooth scrollbar for modal body */
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #5a6fd8, #6a42a0);
+}
+
+
+/* ===== ENHANCED SKILLS EDIT MODAL STYLES ===== */
+
+/* Skills Edit Section */
+.skills-edit-section {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    position: relative;
+}
+
+.skills-edit-section::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 2px;
+}
+
+/* Skills Input Container */
+.skills-input-container {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    align-items: flex-end;
+    position: relative;
+}
+
+.skills-input-container input {
+    flex: 1;
+    padding: 16px 20px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: white;
+    color: #374151;
+    font-family: inherit;
+}
+
+.skills-input-container input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 
+        0 0 0 4px rgba(102, 126, 234, 0.1),
+        0 4px 12px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
+}
+
+.skills-input-container input::placeholder {
+    color: #9ca3af;
+    opacity: 1;
+}
+
+/* Enhanced Add Button */
+.skills-input-container .btn {
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.skills-input-container .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.skills-input-container .btn:hover::before {
+    left: 100%;
+}
+
+.skills-input-container .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.skills-input-container .btn:active {
+    transform: translateY(0);
+}
+
+/* Skills Tags Container */
+.skills-tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    min-height: 80px;
+    padding: 20px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px dashed #dee2e6;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.skills-tags-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(102, 126, 234, 0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.skills-tags-container:hover {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    transform: translateY(-1px);
+}
+
+.skills-tags-container:empty::after {
+    content: 'No skills added yet. Click "Add" to get started!';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #9ca3af;
+    font-style: italic;
+    font-size: 14px;
+    text-align: center;
+    width: 100%;
+    z-index: 1;
+}
+
+/* Enhanced Skill Tags */
+.editable-skill-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    animation: skillTagSlideIn 0.3s ease-out;
+}
+
+.editable-skill-tag::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+    z-index: -1;
+}
+
+.editable-skill-tag:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.editable-skill-tag button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
+}
+
+.editable-skill-tag button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.2);
+}
+
+.editable-skill-tag button:active {
+    transform: scale(0.9);
+}
+
+/* Skill Tag Animation */
+@keyframes skillTagSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Category Labels Enhancement */
+.skills-edit-section .form-label {
+    font-weight: 700;
+    color: #374151;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+
+.skills-edit-section .form-label::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+}
+
+/* Add icons to different skill categories */
+.skills-edit-section .form-group:nth-child(1) .form-label::after {
+    content: '💻';
+    margin-left: auto;
+}
+
+.skills-edit-section .form-group:nth-child(2) .form-label::after {
+    content: '🔧';
+    margin-left: auto;
+}
+
+.skills-edit-section .form-group:nth-child(3) .form-label::after {
+    content: '⚙️';
+    margin-left: auto;
+}
+
+/* Enhanced Form Group Styling */
+.skills-edit-section .form-group {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.skills-edit-section .form-group::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.skills-edit-section .form-group:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.skills-edit-section .form-group:hover::before {
+    opacity: 1;
+}
+
+/* Dark Mode Support */
+[data-theme="dark"] .skills-edit-section .form-group {
+    background: #374151;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .skills-edit-section .form-label {
+    color: #f3f4f6;
+}
+
+[data-theme="dark"] .skills-input-container input {
+    background: #4b5563;
+    border-color: #6b7280;
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .skills-input-container input:focus {
+    border-color: #667eea;
+    background: #4b5563;
+}
+
+[data-theme="dark"] .skills-tags-container {
+    background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+    border-color: #6b7280;
+}
+
+[data-theme="dark"] .skills-tags-container:hover {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+}
+
+[data-theme="dark"] .skills-tags-container:empty::after {
+    color: #9ca3af;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .skills-edit-section {
+        gap: 24px;
+    }
+    
+    .skills-edit-section .form-group {
+        padding: 20px;
+    }
+    
+    .skills-input-container {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .skills-input-container .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .skills-tags-container {
+        min-height: 60px;
+        padding: 16px;
+    }
+    
+    .editable-skill-tag {
+        font-size: 13px;
+        padding: 10px 14px;
+    }
+}
+
+/* Loading State for Add Button */
+.skills-input-container .btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.skills-input-container .btn.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* Success Animation */
+.skill-added-animation {
+    animation: skillAddedPulse 0.6s ease-out;
+}
+
+@keyframes skillAddedPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+
 
 /* Responsive Design */
 @media (max-width: 1024px) {

@@ -81,7 +81,12 @@ function loadDemoProfileData() {
         gpa: '3.8',
         coursesCompleted: 12,
         connections: 28,
-        daysActive: 156
+        daysActive: 156,
+        skills: {
+            programming: ['Python', 'JavaScript', 'Java', 'C++', 'TypeScript'],
+            frameworks: ['React', 'Node.js', 'Django', 'TensorFlow', 'Express.js'],
+            tools: ['Git', 'Docker', 'AWS', 'MongoDB', 'PostgreSQL']
+        }
     };
 
     localStorage.setItem('profile_data', JSON.stringify(demoData));
@@ -118,6 +123,15 @@ function updateProfileDisplay(data) {
 
     // Update stats
     updateProfileStats(data);
+
+    // Update skills if they exist
+    if (data.skills) {
+        updateSkillsDisplay(
+            data.skills.programming || [],
+            data.skills.frameworks || [],
+            data.skills.tools || []
+        );
+    }
 }
 
 function updateProfileStats(data) {
@@ -182,19 +196,40 @@ function handleAvatarUpload(event) {
 
 // ===== EDIT FUNCTIONALITY =====
 function initializeEditModals() {
+    // Profile modal close buttons
     const editModal = document.getElementById('edit-profile-modal');
-
     if (editModal) {
-        // Close modal functionality
         const closeButtons = editModal.querySelectorAll('.modal-close, .modal-cancel, .modal-backdrop');
         closeButtons.forEach(button => {
             button.addEventListener('click', function() {
-                hideEditModal();
+                editModal.classList.remove('active');
             });
+        });
+
+        // Prevent modal from closing when clicking inside
+        editModal.querySelector('.modal-content').addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+
+    // Skills modal close buttons
+    const skillsModal = document.getElementById('edit-skills-modal');
+    if (skillsModal) {
+        const closeButtons = skillsModal.querySelectorAll('.modal-close, .modal-cancel, .modal-backdrop');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                skillsModal.classList.remove('active');
+            });
+        });
+
+        // Prevent modal from closing when clicking inside
+        skillsModal.querySelector('.modal-content').addEventListener('click', function(e) {
+            e.stopPropagation();
         });
     }
 }
 
+// PROFILE EDIT FUNCTIONS
 function editProfile() {
     const profileData = JSON.parse(localStorage.getItem('profile_data') || '{}');
 
@@ -204,24 +239,10 @@ function editProfile() {
     document.getElementById('edit-bio').value = profileData.bio || '';
     document.getElementById('edit-phone').value = profileData.phone || '';
     document.getElementById('edit-location').value = profileData.location || '';
+    document.getElementById('edit-dob').value = profileData.birthday || '';
 
-    showEditModal();
-}
-
-function showEditModal() {
-    const modal = document.getElementById('edit-profile-modal');
-    modal.style.display = 'flex';
-    setTimeout(() => {
-        modal.classList.add('show');
-    }, 10);
-}
-
-function hideEditModal() {
-    const modal = document.getElementById('edit-profile-modal');
-    modal.classList.remove('show');
-    setTimeout(() => {
-        modal.style.display = 'none';
-    }, 300);
+    // Show modal
+    document.getElementById('edit-profile-modal').classList.add('active');
 }
 
 function saveProfile() {
@@ -237,6 +258,7 @@ function saveProfile() {
     profileData.bio = formData.get('bio');
     profileData.phone = formData.get('phone');
     profileData.location = formData.get('location');
+    profileData.birthday = formData.get('date_of_birth');
 
     // Save updated data
     localStorage.setItem('profile_data', JSON.stringify(profileData));
@@ -245,10 +267,120 @@ function saveProfile() {
     updateProfileDisplay(profileData);
 
     // Hide modal
-    hideEditModal();
+    document.getElementById('edit-profile-modal').classList.remove('active');
 
     // Show success message
     showNotification('Profile updated successfully!', 'success');
+}
+
+// SKILLS EDIT FUNCTIONS
+function editSkills() {
+    const profileData = JSON.parse(localStorage.getItem('profile_data') || '{}');
+    const skills = profileData.skills || {
+        programming: [],
+        frameworks: [],
+        tools: []
+    };
+
+    // Populate the edit modal
+    populateSkillsContainer('programming', skills.programming || []);
+    populateSkillsContainer('frameworks', skills.frameworks || []);
+    populateSkillsContainer('tools', skills.tools || []);
+
+    // Show the modal
+    document.getElementById('edit-skills-modal').classList.add('active');
+}
+
+function populateSkillsContainer(type, skills) {
+    const container = document.getElementById(`${type}-tags-container`);
+    container.innerHTML = '';
+    
+    skills.forEach(skill => {
+        const tag = document.createElement('div');
+        tag.className = 'editable-skill-tag';
+        tag.innerHTML = `
+            ${skill}
+            <button onclick="removeSkill('${type}', this)">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        container.appendChild(tag);
+    });
+}
+
+function addSkill(type) {
+    const input = document.getElementById(`skill-${type}-input`);
+    const skill = input.value.trim();
+    
+    if (skill) {
+        const container = document.getElementById(`${type}-tags-container`);
+        const tag = document.createElement('div');
+        tag.className = 'editable-skill-tag';
+        tag.innerHTML = `
+            ${skill}
+            <button onclick="removeSkill('${type}', this)">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        container.appendChild(tag);
+        input.value = '';
+    }
+}
+
+function removeSkill(type, button) {
+    button.parentElement.remove();
+}
+
+function saveSkills() {
+    // Get all skills from the modal
+    const programmingSkills = Array.from(document.getElementById('programming-tags-container').children)
+        .map(tag => tag.textContent.trim().replace('×', '').trim());
+    
+    const frameworksSkills = Array.from(document.getElementById('frameworks-tags-container').children)
+        .map(tag => tag.textContent.trim().replace('×', '').trim());
+    
+    const toolsSkills = Array.from(document.getElementById('tools-tags-container').children)
+        .map(tag => tag.textContent.trim().replace('×', '').trim());
+
+    // Update profile data
+    const profileData = JSON.parse(localStorage.getItem('profile_data') || '{}');
+    profileData.skills = {
+        programming: programmingSkills,
+        frameworks: frameworksSkills,
+        tools: toolsSkills
+    };
+
+    // Save to localStorage
+    localStorage.setItem('profile_data', JSON.stringify(profileData));
+
+    // Update the display
+    updateSkillsDisplay(programmingSkills, frameworksSkills, toolsSkills);
+
+    // Close the modal
+    document.getElementById('edit-skills-modal').classList.remove('active');
+
+    // Show success message
+    showNotification('Skills updated successfully!', 'success');
+}
+
+function updateSkillsDisplay(programming, frameworks, tools) {
+    // Update programming languages
+    const programmingContainer = document.querySelector('.skills-category:nth-child(1) .skills-list');
+    programmingContainer.innerHTML = programming.map(skill => 
+        `<span class="skill-tag">${skill}</span>`
+    ).join('');
+
+    // Update frameworks
+    const frameworksContainer = document.querySelector('.skills-category:nth-child(2) .skills-list');
+    frameworksContainer.innerHTML = frameworks.map(skill => 
+        `<span class="skill-tag">${skill}</span>`
+    ).join('');
+
+    // Update tools
+    const toolsContainer = document.querySelector('.skills-category:nth-child(3) .skills-list');
+    toolsContainer.innerHTML = tools.map(skill => 
+        `<span class="skill-tag">${skill}</span>`
+    ).join('');
 }
 
 // ===== SPECIFIC EDIT FUNCTIONS =====
@@ -276,14 +408,6 @@ function editBio() {
 
         showNotification('Bio updated successfully!', 'success');
     }
-}
-
-function editSkills() {
-    showModal(
-        'Edit Skills',
-        'Skills editing would be implemented here with a comprehensive skill management interface.',
-        'info'
-    );
 }
 
 // ===== PROFILE ACTIONS =====
@@ -331,9 +455,10 @@ GPA: ${data.gpa}
 ABOUT
 ${data.bio}
 
-ACADEMIC INFORMATION
-Student ID: ${data.studentId}
-Academic Advisor: ${data.advisor}
+SKILLS
+Programming: ${(data.skills?.programming || []).join(', ')}
+Frameworks: ${(data.skills?.frameworks || []).join(', ')}
+Tools: ${(data.skills?.tools || []).join(', ')}
 
 ACHIEVEMENTS
 - Current GPA: ${data.gpa}
@@ -361,56 +486,15 @@ function logout() {
     }, 2000);
 }
 
-// ===== REAL-TIME FEATURES =====
-function updateOnlineStatus() {
-    const statusIndicator = document.querySelector('.status-indicator');
-    const statusText = document.querySelector('.status-text');
-
-    if (navigator.onLine) {
-        statusIndicator.classList.remove('offline');
-        statusIndicator.classList.add('online');
-        statusText.textContent = 'Online';
-    } else {
-        statusIndicator.classList.remove('online');
-        statusIndicator.classList.add('offline');
-        statusText.textContent = 'Offline';
-    }
+// ===== UTILITY FUNCTIONS =====
+function showModal(title, message, type) {
+    // This would show a generic modal - implementation depends on your UI framework
+    console.log(`[${type}] ${title}: ${message}`);
 }
 
-// Listen for online/offline events
-window.addEventListener('online', updateOnlineStatus);
-window.addEventListener('offline', updateOnlineStatus);
-
-// ===== PROFILE ANALYTICS =====
-function updateProfileStats() {
-    // Simulate real-time stats updates
-    const currentData = JSON.parse(localStorage.getItem('profile_data') || '{}');
-
-    // Increment days active
-    currentData.daysActive = (currentData.daysActive || 156) + 1;
-
-    localStorage.setItem('profile_data', JSON.stringify(currentData));
-    updateProfileDisplay(currentData);
-}
-
-// ===== KEYBOARD SHORTCUTS =====
-document.addEventListener('keydown', function(e) {
-    // Ctrl/Cmd + E to edit profile
-    if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
-        e.preventDefault();
-        editProfile();
-    }
-
-    // Escape to close modals
-    if (e.key === 'Escape') {
-        hideEditModal();
-    }
-});
-
-// ===== PROFILE SEARCH =====
-function searchProfile(query) {
-    // This would implement profile search functionality
-    console.log('Searching profile for:', query);
+function showNotification(message, type, duration = 3000) {
+    // This would show a notification - implementation depends on your UI framework
+    console.log(`[${type}] ${message}`);
 }
 
 // ===== EXPORT FUNCTIONS =====
@@ -419,22 +503,9 @@ window.editAcademicInfo = editAcademicInfo;
 window.editBio = editBio;
 window.editSkills = editSkills;
 window.saveProfile = saveProfile;
+window.saveSkills = saveSkills;
+window.addSkill = addSkill;
+window.removeSkill = removeSkill;
 window.downloadProfile = downloadProfile;
 window.triggerAvatarUpload = triggerAvatarUpload;
 window.logout = logout;
-
-// ===== DEMO MODE SETUP =====
-function setupDemoMode() {
-    // Set demo login status
-    localStorage.setItem('user_logged_in', 'true');
-
-    // Show demo notification
-    setTimeout(() => {
-        showNotification('Demo mode active. All changes are saved locally.', 'info', 5000);
-    }, 1000);
-}
-
-// Initialize demo mode if accessing directly
-if (!localStorage.getItem('user_logged_in')) {
-    setupDemoMode();
-}

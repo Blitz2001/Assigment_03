@@ -151,8 +151,8 @@ require_once '../Includes/config.php';
         </section>
     </main>
 
-    <script src="js/main.js"></script>
-    <script src="js/theme.js"></script>
+    <script src="../Js/main.js"></script>
+    <script src="../Js/theme.js"></script>
 
 <?php
 include './footer.php';

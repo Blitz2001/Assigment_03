@@ -48,7 +48,7 @@ function initializeNavigation() {
 }
 
 function highlightActiveNavLink() {
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const currentPage = window.location.pathname.split('/').pop() || 'index.php';
     const navLinks = document.querySelectorAll('.nav-link');
 
     navLinks.forEach(link => {

@@ -364,7 +364,7 @@ function handleRegistrationSuccess() {
 
     // Redirect to login page after modal is closed
     setTimeout(() => {
-        window.location.href = 'login.html';
+        window.location.href = 'login.php';
     }, 3000);
 }
 
@@ -377,7 +377,7 @@ function handleLoginSuccess() {
 
     // Redirect to profile page
     setTimeout(() => {
-        window.location.href = 'profile.html';
+        window.location.href = 'profile.php';
     }, 2000);
 }
 

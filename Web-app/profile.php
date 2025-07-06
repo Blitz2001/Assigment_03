@@ -1,6 +1,151 @@
 <?php
 include './navbar.php';
 require_once '../Includes/config.php';
+
+// Initialize variables
+$error = '';
+$success = '';
+
+/*
+// Check if user is logged in (you should have session management)
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
+*/
+
+$user_id = 1;
+// Fetch user data
+$user = [];
+$profile = [];
+$skills = [];
+$social_links = [];
+
+// READ operation - Fetch user data
+try {
+    // Fetch user info
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$user) {
+        throw new Exception("User not found");
+    }
+    
+    // Fetch profile info
+    $stmt = $pdo->prepare("SELECT * FROM profiles WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Fetch skills
+    $stmt = $pdo->prepare("SELECT * FROM skills WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    $skills = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Fetch social links
+    $stmt = $pdo->prepare("SELECT * FROM social_links WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    $social_links = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+} catch (Exception $e) {
+    $error = "Error fetching profile data: " . $e->getMessage();
+}
+
+// Handle form submissions
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // UPDATE profile information
+    if (isset($_POST['update_profile'])) {
+        try {
+            $first_name = $_POST['first_name'];
+            $last_name = $_POST['last_name'];
+            $phone = $_POST['phone'];
+            $location = $_POST['location'];
+            $birthday = $_POST['date_of_birth'];
+            $bio = $_POST['bio'];
+            
+            // Update users table
+            $stmt = $pdo->prepare("UPDATE users SET first_name = ?, last_name = ?, phone = ? WHERE user_id = ?");
+            $stmt->execute([$first_name, $last_name, $phone, $user_id]);
+            
+            // Update or insert into profiles table
+            if ($profile) {
+                $stmt = $pdo->prepare("UPDATE profiles SET bio = ?, location = ?, birthday = ? WHERE user_id = ?");
+                $stmt->execute([$bio, $location, $birthday, $user_id]);
+            } else {
+                $stmt = $pdo->prepare("INSERT INTO profiles (user_id, bio, location, birthday) VALUES (?, ?, ?, ?)");
+                $stmt->execute([$user_id, $bio, $location, $birthday]);
+            }
+            
+            $success = "Profile updated successfully!";
+            // Refresh the page to show updated data
+            header("Location: profile.php");
+            exit();
+            
+        } catch (Exception $e) {
+            $error = "Error updating profile: " . $e->getMessage();
+        }
+    }
+    
+    // UPDATE skills
+    if (isset($_POST['update_skills'])) {
+        try {
+            // First delete existing skills
+            $stmt = $pdo->prepare("DELETE FROM skills WHERE user_id = ?");
+            $stmt->execute([$user_id]);
+            
+            // Add new skills
+            if (!empty($_POST['programming_skills'])) {
+                foreach ($_POST['programming_skills'] as $skill) {
+                    $stmt = $pdo->prepare("INSERT INTO skills (user_id, skill_name, skill_category) VALUES (?, ?, 'Programming Language')");
+                    $stmt->execute([$user_id, $skill]);
+                }
+            }
+            
+            if (!empty($_POST['framework_skills'])) {
+                foreach ($_POST['framework_skills'] as $skill) {
+                    $stmt = $pdo->prepare("INSERT INTO skills (user_id, skill_name, skill_category) VALUES (?, ?, 'Framework')");
+                    $stmt->execute([$user_id, $skill]);
+                }
+            }
+            
+            if (!empty($_POST['tool_skills'])) {
+                foreach ($_POST['tool_skills'] as $skill) {
+                    $stmt = $pdo->prepare("INSERT INTO skills (user_id, skill_name, skill_category) VALUES (?, ?, 'Tool')");
+                    $stmt->execute([$user_id, $skill]);
+                }
+            }
+            
+            $success = "Skills updated successfully!";
+            // Refresh the page to show updated data
+            header("Location: profile.php");
+            exit();
+            
+        } catch (Exception $e) {
+            $error = "Error updating skills: " . $e->getMessage();
+        }
+    }
+}
+
+// Function to categorize skills for display
+function categorizeSkills($skills) {
+    $categorized = [
+        'Programming Language' => [],
+        'Framework' => [],
+        'Tool' => [],
+        'Other' => []
+    ];
+    
+    foreach ($skills as $skill) {
+        $categorized[$skill['skill_category']][] = $skill['skill_name'];
+    }
+    
+    return $categorized;
+}
+
+$categorized_skills = categorizeSkills($skills);
 ?>
 
 <!DOCTYPE html>
@@ -15,6 +160,15 @@ require_once '../Includes/config.php';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+
+    <!-- Display error/success messages -->
+    <?php if ($error): ?>
+        <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+    <?php endif; ?>
+    
+    <?php if ($success): ?>
+        <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
+    <?php endif; ?>
 
     <!-- Main Content -->
     <main class="profile-main">
@@ -37,11 +191,11 @@ require_once '../Includes/config.php';
                     </div>
 
                     <div class="profile-info">
-                        <h1 class="profile-name" id="profile-name">John Doe</h1>
-                        <p class="profile-title" id="profile-title">Computer Science Student</p>
-                        <p class="profile-university" id="profile-university">Massachusetts Institute of Technology</p>
+                        <h1 class="profile-name" id="profile-name"><?php echo htmlspecialchars($user['first_name'] . ' ' . htmlspecialchars($user['last_name'])) ?></h1>
+                        <p class="profile-title" id="profile-title"><?php echo htmlspecialchars($profile['title'] ?? 'Student'); ?></p>
+                        <p class="profile-university" id="profile-university"><?php echo htmlspecialchars($user['university']); ?></p>
                         <div class="profile-badges">
-                            <span class="badge badge-primary">Senior</span>
+                            <span class="badge badge-primary"><?php echo htmlspecialchars($user['academic_year']); ?></span>
                             <span class="badge badge-success">Verified</span>
                             <span class="badge badge-info">Active</span>
                         </div>
@@ -81,7 +235,7 @@ require_once '../Includes/config.php';
                                     <i class="fas fa-trophy"></i>
                                 </div>
                                 <div class="stat-content">
-                                    <div class="stat-value">3.8</div>
+                                    <div class="stat-value"><?php echo htmlspecialchars($profile['gpa'] ?? 'N/A'); ?></div>
                                     <div class="stat-label">GPA</div>
                                 </div>
                             </div>
@@ -112,19 +266,19 @@ require_once '../Includes/config.php';
                         <div class="contact-info">
                             <div class="contact-item">
                                 <i class="fas fa-envelope"></i>
-                                <span id="contact-email">john.doe@student.mit.edu</span>
+                                <span id="contact-email"><?php echo htmlspecialchars($user['email']); ?></span>
                             </div>
                             <div class="contact-item">
                                 <i class="fas fa-phone"></i>
-                                <span id="contact-phone">+1 (555) 123-4567</span>
+                                <span id="contact-phone"><?php echo htmlspecialchars($user['phone'] ?? 'N/A'); ?></span>
                             </div>
                             <div class="contact-item">
                                 <i class="fas fa-map-marker-alt"></i>
-                                <span id="contact-location">Cambridge, MA</span>
+                                <span id="contact-location"><?php echo htmlspecialchars($profile['location'] ?? 'N/A'); ?></span>
                             </div>
                             <div class="contact-item">
                                 <i class="fas fa-birthday-cake"></i>
-                                <span id="contact-birthday">March 15, 2001</span>
+                                <span id="contact-birthday"><?php echo isset($profile['birthday']) ? date('F j, Y', strtotime($profile['birthday'])) : 'N/A'; ?></span>
                             </div>
                         </div>
                     </div>
@@ -133,22 +287,12 @@ require_once '../Includes/config.php';
                     <div class="profile-card">
                         <h3>Social Links</h3>
                         <div class="social-links">
-                            <a href="#" class="social-link">
-                                <i class="fab fa-linkedin"></i>
-                                <span>LinkedIn</span>
-                            </a>
-                            <a href="#" class="social-link">
-                                <i class="fab fa-github"></i>
-                                <span>GitHub</span>
-                            </a>
-                            <a href="#" class="social-link">
-                                <i class="fab fa-twitter"></i>
-                                <span>Twitter</span>
-                            </a>
-                            <a href="#" class="social-link">
-                                <i class="fas fa-globe"></i>
-                                <span>Portfolio</span>
-                            </a>
+                            <?php foreach ($social_links as $link): ?>
+                                <a href="<?php echo htmlspecialchars($link['url']); ?>" class="social-link" target="_blank">
+                                    <i class="fab fa-<?php echo htmlspecialchars($link['platform']); ?>"></i>
+                                    <span><?php echo ucfirst(htmlspecialchars($link['platform'])); ?></span>
+                                </a>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
@@ -167,31 +311,31 @@ require_once '../Includes/config.php';
                             <div class="info-row">
                                 <div class="info-item">
                                     <label>Student ID</label>
-                                    <span id="student-id">MIT2024001</span>
+                                    <span id="student-id"><?php echo htmlspecialchars($user['student_id']); ?></span>
                                 </div>
                                 <div class="info-item">
                                     <label>Academic Year</label>
-                                    <span id="academic-year">Senior (4th Year)</span>
+                                    <span id="academic-year"><?php echo htmlspecialchars($user['academic_year']); ?></span>
                                 </div>
                             </div>
                             <div class="info-row">
                                 <div class="info-item">
                                     <label>Major</label>
-                                    <span id="major">Computer Science</span>
+                                    <span id="major"><?php echo htmlspecialchars($user['major']); ?></span>
                                 </div>
                                 <div class="info-item">
                                     <label>Minor</label>
-                                    <span id="minor">Mathematics</span>
+                                    <span id="minor"><?php echo htmlspecialchars($profile['minor'] ?? 'N/A'); ?></span>
                                 </div>
                             </div>
                             <div class="info-row">
                                 <div class="info-item">
                                     <label>Expected Graduation</label>
-                                    <span id="graduation">May 2024</span>
+                                    <span id="graduation"><?php echo htmlspecialchars($profile['expected_graduation'] ?? 'N/A'); ?></span>
                                 </div>
                                 <div class="info-item">
                                     <label>Advisor</label>
-                                    <span id="advisor">Dr. Sarah Johnson</span>
+                                    <span id="advisor"><?php echo htmlspecialchars($profile['advisor'] ?? 'N/A'); ?></span>
                                 </div>
                             </div>
                         </div>
@@ -208,9 +352,7 @@ require_once '../Includes/config.php';
                         </div>
                         <div class="bio-content">
                             <p id="bio-text">
-                                I'm a passionate Computer Science student at MIT with a focus on artificial intelligence and machine learning.
-                                I enjoy working on innovative projects that solve real-world problems and am always eager to learn new technologies.
-                                In my free time, I contribute to open-source projects and participate in hackathons.
+                                <?php echo htmlspecialchars($profile['bio'] ?? 'No bio available.'); ?>
                             </p>
                         </div>
                     </div>
@@ -225,36 +367,38 @@ require_once '../Includes/config.php';
                             </button>
                         </div>
                         <div class="skills-content">
-                            <div class="skills-category">
-                                <h4>Programming Languages</h4>
-                                <div class="skills-list">
-                                    <span class="skill-tag">Python</span>
-                                    <span class="skill-tag">JavaScript</span>
-                                    <span class="skill-tag">Java</span>
-                                    <span class="skill-tag">C++</span>
-                                    <span class="skill-tag">TypeScript</span>
+                            <?php if (!empty($categorized_skills['Programming Language'])): ?>
+                                <div class="skills-category">
+                                    <h4>Programming Languages</h4>
+                                    <div class="skills-list">
+                                        <?php foreach ($categorized_skills['Programming Language'] as $skill): ?>
+                                            <span class="skill-tag"><?php echo htmlspecialchars($skill); ?></span>
+                                        <?php endforeach; ?>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="skills-category">
-                                <h4>Frameworks & Libraries</h4>
-                                <div class="skills-list">
-                                    <span class="skill-tag">React</span>
-                                    <span class="skill-tag">Node.js</span>
-                                    <span class="skill-tag">Django</span>
-                                    <span class="skill-tag">TensorFlow</span>
-                                    <span class="skill-tag">Express.js</span>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($categorized_skills['Framework'])): ?>
+                                <div class="skills-category">
+                                    <h4>Frameworks & Libraries</h4>
+                                    <div class="skills-list">
+                                        <?php foreach ($categorized_skills['Framework'] as $skill): ?>
+                                            <span class="skill-tag"><?php echo htmlspecialchars($skill); ?></span>
+                                        <?php endforeach; ?>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="skills-category">
-                                <h4>Tools & Platforms</h4>
-                                <div class="skills-list">
-                                    <span class="skill-tag">Git</span>
-                                    <span class="skill-tag">Docker</span>
-                                    <span class="skill-tag">AWS</span>
-                                    <span class="skill-tag">MongoDB</span>
-                                    <span class="skill-tag">PostgreSQL</span>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($categorized_skills['Tool'])): ?>
+                                <div class="skills-category">
+                                    <h4>Tools & Platforms</h4>
+                                    <div class="skills-list">
+                                        <?php foreach ($categorized_skills['Tool'] as $skill): ?>
+                                            <span class="skill-tag"><?php echo htmlspecialchars($skill); ?></span>
+                                        <?php endforeach; ?>
+                                    </div>
                                 </div>
-                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
 
@@ -316,36 +460,110 @@ require_once '../Includes/config.php';
                 </button>
             </div>
             <div class="modal-body">
-                <form id="edit-profile-form" class="edit-form">
+                <form id="edit-profile-form" class="edit-form" method="POST" action="profile.php">
                     <div class="form-row">
                         <div class="form-group">
                             <label for="edit-first-name" class="form-label">First Name</label>
-                            <input type="text" id="edit-first-name" name="first_name" class="form-input" value="John">
+                            <input type="text" id="edit-first-name" name="first_name" class="form-input" value="<?php echo htmlspecialchars($user['first_name']); ?>">
                         </div>
                         <div class="form-group">
                             <label for="edit-last-name" class="form-label">Last Name</label>
-                            <input type="text" id="edit-last-name" name="last_name" class="form-input" value="Doe">
+                            <input type="text" id="edit-last-name" name="last_name" class="form-input" value="<?php echo htmlspecialchars($user['last_name']); ?>">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="edit-bio" class="form-label">Bio</label>
-                        <textarea id="edit-bio" name="bio" class="form-textarea" rows="4">I'm a passionate Computer Science student at MIT with a focus on artificial intelligence and machine learning.</textarea>
+                        <textarea id="edit-bio" name="bio" class="form-textarea" rows="4"><?php echo htmlspecialchars($profile['bio'] ?? ''); ?></textarea>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="edit-phone" class="form-label">Phone</label>
-                            <input type="tel" id="edit-phone" name="phone" class="form-input" value="+1 (555) 123-4567">
+                            <input type="tel" id="edit-phone" name="phone" class="form-input" value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-dob" class="form-label">Date of Birth</label>
+                            <input type="date" id="edit-dob" name="date_of_birth" class="form-input" value="<?php echo isset($profile['birthday']) ? htmlspecialchars($profile['birthday']) : ''; ?>">
                         </div>
                         <div class="form-group">
                             <label for="edit-location" class="form-label">Location</label>
-                            <input type="text" id="edit-location" name="location" class="form-input" value="Cambridge, MA">
+                            <input type="text" id="edit-location" name="location" class="form-input" value="<?php echo htmlspecialchars($profile['location'] ?? ''); ?>">
                         </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
+                        <button type="submit" name="update_profile" class="btn btn-primary">Save Changes</button>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary modal-cancel">Cancel</button>
-                <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
+        </div>
+    </div>
+
+    <!-- Edit Skills Modal -->
+    <div class="modal" id="edit-skills-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>Edit Skills & Technologies</h3>
+                <button class="modal-close" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-skills-form" class="edit-form" method="POST" action="profile.php">
+                    <div class="skills-edit-section">
+                        <div class="form-group">
+                            <label class="form-label">Programming Languages</label>
+                            <div class="skills-input-container">
+                                <input type="text" id="skill-programming-input" class="form-input" placeholder="Add programming language">
+                                <button type="button" class="btn btn-sm btn-primary" onclick="addSkill('programming')">
+                                    <i class="fas fa-plus"></i> Add
+                                </button>
+                            </div>
+                            <div class="skills-tags-container" id="programming-tags-container">
+                                <?php foreach ($categorized_skills['Programming Language'] as $skill): ?>
+                                    <input type="hidden" name="programming_skills[]" value="<?php echo htmlspecialchars($skill); ?>">
+                                    <span class="skill-tag"><?php echo htmlspecialchars($skill); ?> <i class="fas fa-times" onclick="removeSkill(this, 'programming')"></i></span>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Frameworks & Libraries</label>
+                            <div class="skills-input-container">
+                                <input type="text" id="skill-frameworks-input" class="form-input" placeholder="Add framework/library">
+                                <button type="button" class="btn btn-sm btn-primary" onclick="addSkill('frameworks')">
+                                    <i class="fas fa-plus"></i> Add
+                                </button>
+                            </div>
+                            <div class="skills-tags-container" id="frameworks-tags-container">
+                                <?php foreach ($categorized_skills['Framework'] as $skill): ?>
+                                    <input type="hidden" name="framework_skills[]" value="<?php echo htmlspecialchars($skill); ?>">
+                                    <span class="skill-tag"><?php echo htmlspecialchars($skill); ?> <i class="fas fa-times" onclick="removeSkill(this, 'frameworks')"></i></span>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Tools & Platforms</label>
+                            <div class="skills-input-container">
+                                <input type="text" id="skill-tools-input" class="form-input" placeholder="Add tool/platform">
+                                <button type="button" class="btn btn-sm btn-primary" onclick="addSkill('tools')">
+                                    <i class="fas fa-plus"></i> Add
+                                </button>
+                            </div>
+                            <div class="skills-tags-container" id="tools-tags-container">
+                                <?php foreach ($categorized_skills['Tool'] as $skill): ?>
+                                    <input type="hidden" name="tool_skills[]" value="<?php echo htmlspecialchars($skill); ?>">
+                                    <span class="skill-tag"><?php echo htmlspecialchars($skill); ?> <i class="fas fa-times" onclick="removeSkill(this, 'tools')"></i></span>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
+                        <button type="submit" name="update_skills" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -355,7 +573,6 @@ require_once '../Includes/config.php';
     <script src="../Js/profile.js"></script>
 </body>
 </html>
-
 
 <?php
 include './footer.php';
