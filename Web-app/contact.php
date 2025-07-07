@@ -141,7 +141,7 @@ require_once '../Includes/config.php';
                             <p>Fill out the form below and we'll get back to you as soon as possible.</p>
                         </div>
 
-                        <form class="contact-form" id="contact-form" action="php/contact.php" method="POST">
+                        <form class="contact-form" id="contact-form" action="../Backend/contact.php" method="POST">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="first_name" class="form-label">
@@ -322,24 +322,6 @@ require_once '../Includes/config.php';
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="updates" name="updates">
-                                    <label for="updates" class="checkbox-label">
-                                        I would like to receive updates about new features and improvements
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="newsletter" name="newsletter">
-                                    <label for="newsletter" class="checkbox-label">
-                                        Subscribe to our monthly newsletter
-                                    </label>
-                                </div>
-                            </div>
-
                             <button type="submit" class="btn btn-primary btn-full">
                                 <i class="fas fa-paper-plane"></i>
                                 Send Message
@@ -350,34 +332,6 @@ require_once '../Includes/config.php';
             </div>
         </div>
     </main>
-
-    <!-- Success Modal -->
-    <div class="modal" id="success-modal">
-        <div class="modal-backdrop"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Message Sent Successfully!</h3>
-                <button class="modal-close" aria-label="Close modal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="success-content">
-                    <div class="success-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <p>Thank you for contacting us! We've received your message and will respond within 24 hours.</p>
-                    <div class="response-time">
-                        <i class="fas fa-clock"></i>
-                        <span>Expected response time: 2-24 hours</span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary modal-ok">OK</button>
-            </div>
-        </div>
-    </div>
 
     <script src="../Js/main.js"></script>
     <script src="../Js/theme.js"></script>
