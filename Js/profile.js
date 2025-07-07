@@ -6,29 +6,118 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Check if user is logged in
     checkAuthStatus();
+
+    // Attach event listeners to buttons
+    attachButtonHandlers();
+<<<<<<< HEAD
+
+    // Social Links Edit Button
+    const editSocialBtn = document.querySelector('.js-edit-social');
+    if (editSocialBtn) {
+        editSocialBtn.addEventListener('click', function() {
+            document.getElementById('edit-social-modal').classList.add('active');
+        });
+    }
+=======
+>>>>>>> c89e32f3b0aee1fe3295f9c3b861477dd9301f29
 });
 
 // ===== AUTHENTICATION CHECK =====
 function checkAuthStatus() {
-    // In a real application, this would check session/token
-    const isLoggedIn = localStorage.getItem('user_logged_in') === 'true';
+    // Authentication is handled server-side by PHP sessions
+    // This function is kept for compatibility but not used
+}
 
-    if (!isLoggedIn) {
-        // Redirect to login page if not authenticated
-        showModal(
-            'Authentication Required',
-            'Please log in to access your profile.',
-            'info'
-        );
-
-        setTimeout(() => {
-            window.location.href = 'login.html';
-        }, 2000);
-        return;
+// ===== BUTTON HANDLERS =====
+function attachButtonHandlers() {
+    // Edit Profile Button
+    const editProfileBtn = document.querySelector('.js-edit-profile');
+    if (editProfileBtn) {
+        editProfileBtn.addEventListener('click', editProfile);
     }
 
-    // Load user profile data
-    loadProfileData();
+    // Edit Skills Button
+    const editSkillsBtn = document.querySelector('.js-edit-skills');
+    if (editSkillsBtn) {
+        editSkillsBtn.addEventListener('click', editSkills);
+    }
+
+    // Edit Academic Button
+    const editAcademicBtn = document.querySelector('.js-edit-academic');
+    if (editAcademicBtn) {
+        editAcademicBtn.addEventListener('click', editAcademicInfo);
+    }
+
+    // Edit Bio Button
+    const editBioBtn = document.querySelector('.js-edit-bio');
+    if (editBioBtn) {
+        editBioBtn.addEventListener('click', editBio);
+    }
+
+    // Save buttons are handled by form submission to PHP
+
+    // Download Profile Button
+    const downloadProfileBtn = document.querySelector('.js-download-profile');
+    if (downloadProfileBtn) {
+        downloadProfileBtn.addEventListener('click', downloadProfile);
+    }
+
+    // Logout Button
+    const logoutBtn = document.querySelector('.js-logout');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
+}
+
+// ===== BUTTON HANDLERS =====
+function attachButtonHandlers() {
+    // Edit Profile Button
+    const editProfileBtn = document.querySelector('.js-edit-profile');
+    if (editProfileBtn) {
+        editProfileBtn.addEventListener('click', editProfile);
+    }
+
+    // Edit Skills Button
+    const editSkillsBtn = document.querySelector('.js-edit-skills');
+    if (editSkillsBtn) {
+        editSkillsBtn.addEventListener('click', editSkills);
+    }
+
+    // Edit Academic Button
+    const editAcademicBtn = document.querySelector('.js-edit-academic');
+    if (editAcademicBtn) {
+        editAcademicBtn.addEventListener('click', editAcademicInfo);
+    }
+
+    // Edit Bio Button
+    const editBioBtn = document.querySelector('.js-edit-bio');
+    if (editBioBtn) {
+        editBioBtn.addEventListener('click', editBio);
+    }
+
+    // Save Profile Button
+    const saveProfileBtn = document.querySelector('.js-save-profile');
+    if (saveProfileBtn) {
+        saveProfileBtn.addEventListener('click', saveProfile);
+    }
+
+    // Save Skills Button
+    const saveSkillsBtn = document.querySelector('.js-save-skills');
+    if (saveSkillsBtn) {
+        saveSkillsBtn.addEventListener('click', saveSkills);
+    }
+
+    // Download Profile Button
+    const downloadProfileBtn = document.querySelector('.js-download-profile');
+    if (downloadProfileBtn) {
+        downloadProfileBtn.addEventListener('click', downloadProfile);
+    }
+
+    // Logout Button
+    const logoutBtn = document.querySelector('.js-logout');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
 }
 
 // ===== PROFILE INITIALIZATION =====
@@ -41,83 +130,22 @@ function initializeProfile() {
 
     // Initialize profile actions
     initializeProfileActions();
-
-    // Load demo data if not logged in through proper flow
-    if (!localStorage.getItem('profile_data')) {
-        loadDemoProfileData();
-    }
 }
 
 // ===== PROFILE DATA MANAGEMENT =====
 function loadProfileData() {
-    const profileData = JSON.parse(localStorage.getItem('profile_data') || '{}');
-
-    if (Object.keys(profileData).length === 0) {
-        loadDemoProfileData();
-        return;
-    }
-
-    // Populate profile fields
-    updateProfileDisplay(profileData);
+    // Profile data is loaded server-side by PHP
+    // This function is kept for compatibility but not used
 }
 
 function loadDemoProfileData() {
-    const demoData = {
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@student.mit.edu',
-        phone: '+1 (555) 123-4567',
-        location: 'Cambridge, MA',
-        university: 'Massachusetts Institute of Technology',
-        studentId: 'MIT2024001',
-        major: 'Computer Science',
-        minor: 'Mathematics',
-        year: 'Senior (4th Year)',
-        graduation: 'May 2024',
-        advisor: 'Dr. Sarah Johnson',
-        bio: "I'm a passionate Computer Science student at MIT with a focus on artificial intelligence and machine learning. I enjoy working on innovative projects that solve real-world problems and am always eager to learn new technologies. In my free time, I contribute to open-source projects and participate in hackathons.",
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face',
-        birthday: 'March 15, 2001',
-        gpa: '3.8',
-        coursesCompleted: 12,
-        connections: 28,
-        daysActive: 156
-    };
-
-    localStorage.setItem('profile_data', JSON.stringify(demoData));
-    updateProfileDisplay(demoData);
+    // Demo data is not needed for PHP version
+    // This function is kept for compatibility but not used
 }
 
 function updateProfileDisplay(data) {
-    // Update header information
-    document.getElementById('profile-name').textContent = `${data.firstName} ${data.lastName}`;
-    document.getElementById('profile-title').textContent = `${data.major} Student`;
-    document.getElementById('profile-university').textContent = data.university;
-
-    // Update contact information
-    document.getElementById('contact-email').textContent = data.email;
-    document.getElementById('contact-phone').textContent = data.phone;
-    document.getElementById('contact-location').textContent = data.location;
-    document.getElementById('contact-birthday').textContent = data.birthday;
-
-    // Update academic information
-    document.getElementById('student-id').textContent = data.studentId;
-    document.getElementById('academic-year').textContent = data.year;
-    document.getElementById('major').textContent = data.major;
-    document.getElementById('minor').textContent = data.minor;
-    document.getElementById('graduation').textContent = data.graduation;
-    document.getElementById('advisor').textContent = data.advisor;
-
-    // Update bio
-    document.getElementById('bio-text').textContent = data.bio;
-
-    // Update avatar
-    if (data.avatar) {
-        document.getElementById('profile-avatar-img').src = data.avatar;
-    }
-
-    // Update stats
-    updateProfileStats(data);
+    // This function is not needed for PHP version as data is populated server-side
+    // Keeping it for compatibility but it won't be used
 }
 
 function updateProfileStats(data) {
@@ -182,48 +210,56 @@ function handleAvatarUpload(event) {
 
 // ===== EDIT FUNCTIONALITY =====
 function initializeEditModals() {
-    const editModal = document.getElementById('edit-profile-modal');
-
-    if (editModal) {
-        // Close modal functionality
-        const closeButtons = editModal.querySelectorAll('.modal-close, .modal-cancel, .modal-backdrop');
-        closeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                hideEditModal();
-            });
+    // Close buttons for all modals
+    document.querySelectorAll('.modal-close, .modal-cancel, .modal-backdrop').forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
         });
-    }
+    });
+
+    // Prevent modal content from closing when clicking inside
+    document.querySelectorAll('.modal-content').forEach(content => {
+        content.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+<<<<<<< HEAD
+
+    // Close modal when clicking on backdrop
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+        backdrop.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        });
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const activeModal = document.querySelector('.modal.active');
+            if (activeModal) {
+                activeModal.classList.remove('active');
+            }
+        }
+    });
+=======
+>>>>>>> c89e32f3b0aee1fe3295f9c3b861477dd9301f29
 }
 
+// PROFILE EDIT FUNCTIONS
 function editProfile() {
-    const profileData = JSON.parse(localStorage.getItem('profile_data') || '{}');
-
-    // Populate edit form
-    document.getElementById('edit-first-name').value = profileData.firstName || '';
-    document.getElementById('edit-last-name').value = profileData.lastName || '';
-    document.getElementById('edit-bio').value = profileData.bio || '';
-    document.getElementById('edit-phone').value = profileData.phone || '';
-    document.getElementById('edit-location').value = profileData.location || '';
-
-    showEditModal();
+    // Show modal - the form is already populated with PHP data
+    document.getElementById('edit-profile-modal').classList.add('active');
 }
 
-function showEditModal() {
-    const modal = document.getElementById('edit-profile-modal');
-    modal.style.display = 'flex';
-    setTimeout(() => {
-        modal.classList.add('show');
-    }, 10);
-}
-
-function hideEditModal() {
-    const modal = document.getElementById('edit-profile-modal');
-    modal.classList.remove('show');
-    setTimeout(() => {
-        modal.style.display = 'none';
-    }, 300);
-}
-
+<<<<<<< HEAD
+// Profile form will submit directly to PHP, no JavaScript save needed
+=======
 function saveProfile() {
     const form = document.getElementById('edit-profile-form');
     const formData = new FormData(form);
@@ -232,11 +268,12 @@ function saveProfile() {
     const profileData = JSON.parse(localStorage.getItem('profile_data') || '{}');
 
     // Update with form data
-    profileData.firstName = formData.get('first_name');
-    profileData.lastName = formData.get('last_name');
-    profileData.bio = formData.get('bio');
-    profileData.phone = formData.get('phone');
-    profileData.location = formData.get('location');
+    profileData.firstName = formData.get('first_name') || profileData.firstName;
+    profileData.lastName = formData.get('last_name') || profileData.lastName;
+    profileData.bio = formData.get('bio') || profileData.bio;
+    profileData.phone = formData.get('phone') || profileData.phone;
+    profileData.location = formData.get('location') || profileData.location;
+    profileData.birthday = formData.get('date_of_birth') || profileData.birthday;
 
     // Save updated data
     localStorage.setItem('profile_data', JSON.stringify(profileData));
@@ -245,24 +282,148 @@ function saveProfile() {
     updateProfileDisplay(profileData);
 
     // Hide modal
-    hideEditModal();
+    document.getElementById('edit-profile-modal').classList.remove('active');
 
     // Show success message
     showNotification('Profile updated successfully!', 'success');
 }
+>>>>>>> c89e32f3b0aee1fe3295f9c3b861477dd9301f29
+
+// SKILLS EDIT FUNCTIONS
+function editSkills() {
+    // Show the modal - skills are already populated with PHP data
+    document.getElementById('edit-skills-modal').classList.add('active');
+    
+    // Debug: Check if containers exist
+    console.log('Programming container:', document.getElementById('programming-tags-container'));
+    console.log('Frameworks container:', document.getElementById('frameworks-tags-container'));
+    console.log('Tools container:', document.getElementById('tools-tags-container'));
+}
+
+function populateSkillsContainer(type, skills) {
+    const container = document.getElementById(`${type}-tags-container`);
+    container.innerHTML = '';
+    
+    skills.forEach(skill => {
+        const tag = document.createElement('div');
+        tag.className = 'editable-skill-tag';
+        tag.innerHTML = `
+            ${skill}
+            <button onclick="removeSkill('${type}', this)">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        container.appendChild(tag);
+    });
+}
+
+function addSkill(type) {
+    console.log(`addSkill called with type: ${type}`);
+    const input = document.getElementById(`skill-${type}-input`);
+    const skill = input.value.trim();
+    
+    console.log(`Input value: "${skill}"`);
+    
+    if (skill) {
+        const container = document.getElementById(`${type}-tags-container`);
+        
+        if (!container) {
+            console.error(`Container not found for type: ${type}`);
+            return;
+        }
+        
+        console.log(`Container found:`, container);
+        
+        // Create hidden input for form submission
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = `${type}_skills[]`;
+        hiddenInput.value = skill;
+        
+        // Create skill tag
+        const tag = document.createElement('span');
+        tag.className = 'skill-tag';
+        tag.innerHTML = `
+            ${skill}
+            <i class="fas fa-times" onclick="removeSkill(this, '${type}')"></i>
+        `;
+        
+        container.appendChild(hiddenInput);
+        container.appendChild(tag);
+        input.value = '';
+        
+        console.log(`Added skill: ${skill} to ${type}`);
+    } else {
+        console.log('No skill value provided');
+    }
+}
+
+function removeSkill(button, type) {
+    const tag = button.parentElement;
+    const container = tag.parentElement;
+    
+    // Find the corresponding hidden input that comes before this tag
+    let hiddenInput = null;
+    let currentElement = tag.previousElementSibling;
+    
+    // Look for the hidden input that comes before this tag
+    while (currentElement) {
+        if (currentElement.tagName === 'INPUT' && currentElement.name === `${type}_skills[]`) {
+            hiddenInput = currentElement;
+            break;
+        }
+        currentElement = currentElement.previousElementSibling;
+    }
+    
+    // Remove the hidden input if found
+    if (hiddenInput) {
+        hiddenInput.remove();
+    }
+    
+    // Remove the tag
+    tag.remove();
+}
+
+// Skills form will submit directly to PHP, no JavaScript save needed
+
+function updateSkillsDisplay(programming, frameworks, tools) {
+    // Update programming languages
+    const programmingContainer = document.querySelector('.skills-category:nth-child(1) .skills-list');
+    if (programmingContainer) {
+        programmingContainer.innerHTML = programming.map(skill => 
+            `<span class="skill-tag">${skill}</span>`
+        ).join('');
+    }
+
+    // Update frameworks
+    const frameworksContainer = document.querySelector('.skills-category:nth-child(2) .skills-list');
+    if (frameworksContainer) {
+        frameworksContainer.innerHTML = frameworks.map(skill => 
+            `<span class="skill-tag">${skill}</span>`
+        ).join('');
+    }
+
+    // Update tools
+    const toolsContainer = document.querySelector('.skills-category:nth-child(3) .skills-list');
+    if (toolsContainer) {
+        toolsContainer.innerHTML = tools.map(skill => 
+            `<span class="skill-tag">${skill}</span>`
+        ).join('');
+    }
+}
 
 // ===== SPECIFIC EDIT FUNCTIONS =====
 function editAcademicInfo() {
-    showModal(
-        'Edit Academic Information',
-        'Academic information editing would be implemented here with a detailed form.',
-        'info'
-    );
+    // Show the academic info modal
+    document.getElementById('edit-academic-modal').classList.add('active');
 }
 
 function editBio() {
+<<<<<<< HEAD
+    // Show the edit profile modal for bio editing
+    document.getElementById('edit-profile-modal').classList.add('active');
+=======
     const currentBio = document.getElementById('bio-text').textContent;
-
     const newBio = prompt('Edit your bio:', currentBio);
 
     if (newBio !== null && newBio.trim() !== '') {
@@ -276,14 +437,7 @@ function editBio() {
 
         showNotification('Bio updated successfully!', 'success');
     }
-}
-
-function editSkills() {
-    showModal(
-        'Edit Skills',
-        'Skills editing would be implemented here with a comprehensive skill management interface.',
-        'info'
-    );
+>>>>>>> c89e32f3b0aee1fe3295f9c3b861477dd9301f29
 }
 
 // ===== PROFILE ACTIONS =====
@@ -331,9 +485,10 @@ GPA: ${data.gpa}
 ABOUT
 ${data.bio}
 
-ACADEMIC INFORMATION
-Student ID: ${data.studentId}
-Academic Advisor: ${data.advisor}
+SKILLS
+Programming: ${(data.skills?.programming || []).join(', ')}
+Frameworks: ${(data.skills?.frameworks || []).join(', ')}
+Tools: ${(data.skills?.tools || []).join(', ')}
 
 ACHIEVEMENTS
 - Current GPA: ${data.gpa}
@@ -357,60 +512,19 @@ function logout() {
     setTimeout(() => {
         localStorage.removeItem('user_logged_in');
         localStorage.removeItem('profile_data');
-        window.location.href = 'index.html';
+        window.location.href = 'index.php';
     }, 2000);
 }
 
-// ===== REAL-TIME FEATURES =====
-function updateOnlineStatus() {
-    const statusIndicator = document.querySelector('.status-indicator');
-    const statusText = document.querySelector('.status-text');
-
-    if (navigator.onLine) {
-        statusIndicator.classList.remove('offline');
-        statusIndicator.classList.add('online');
-        statusText.textContent = 'Online';
-    } else {
-        statusIndicator.classList.remove('online');
-        statusIndicator.classList.add('offline');
-        statusText.textContent = 'Offline';
-    }
+// ===== UTILITY FUNCTIONS =====
+function showModal(title, message, type) {
+    // This would show a generic modal - implementation depends on your UI framework
+    console.log(`[${type}] ${title}: ${message}`);
 }
 
-// Listen for online/offline events
-window.addEventListener('online', updateOnlineStatus);
-window.addEventListener('offline', updateOnlineStatus);
-
-// ===== PROFILE ANALYTICS =====
-function updateProfileStats() {
-    // Simulate real-time stats updates
-    const currentData = JSON.parse(localStorage.getItem('profile_data') || '{}');
-
-    // Increment days active
-    currentData.daysActive = (currentData.daysActive || 156) + 1;
-
-    localStorage.setItem('profile_data', JSON.stringify(currentData));
-    updateProfileDisplay(currentData);
-}
-
-// ===== KEYBOARD SHORTCUTS =====
-document.addEventListener('keydown', function(e) {
-    // Ctrl/Cmd + E to edit profile
-    if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
-        e.preventDefault();
-        editProfile();
-    }
-
-    // Escape to close modals
-    if (e.key === 'Escape') {
-        hideEditModal();
-    }
-});
-
-// ===== PROFILE SEARCH =====
-function searchProfile(query) {
-    // This would implement profile search functionality
-    console.log('Searching profile for:', query);
+function showNotification(message, type, duration = 3000) {
+    // This would show a notification - implementation depends on your UI framework
+    console.log(`[${type}] ${message}`);
 }
 
 // ===== EXPORT FUNCTIONS =====
@@ -419,22 +533,9 @@ window.editAcademicInfo = editAcademicInfo;
 window.editBio = editBio;
 window.editSkills = editSkills;
 window.saveProfile = saveProfile;
+window.saveSkills = saveSkills;
+window.addSkill = addSkill;
+window.removeSkill = removeSkill;
 window.downloadProfile = downloadProfile;
 window.triggerAvatarUpload = triggerAvatarUpload;
 window.logout = logout;
-
-// ===== DEMO MODE SETUP =====
-function setupDemoMode() {
-    // Set demo login status
-    localStorage.setItem('user_logged_in', 'true');
-
-    // Show demo notification
-    setTimeout(() => {
-        showNotification('Demo mode active. All changes are saved locally.', 'info', 5000);
-    }, 1000);
-}
-
-// Initialize demo mode if accessing directly
-if (!localStorage.getItem('user_logged_in')) {
-    setupDemoMode();
-}
