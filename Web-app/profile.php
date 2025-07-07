@@ -182,6 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
+<<<<<<< HEAD
     // Fetch available skills for the dropdown
     try {
         $stmt = $pdo->query("SELECT * FROM all_skills ORDER BY skill_name");
@@ -245,6 +246,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error = "Error updating social links: " . $e->getMessage();
         }
     }
+=======
+    // In your profile.php, add this after fetching user skills
+try {
+    $stmt = $pdo->query("SELECT * FROM all_skills ORDER BY skill_name");
+    $all_skills = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $error = "Error fetching available skills: " . $e->getMessage();
+}
+>>>>>>> c89e32f3b0aee1fe3295f9c3b861477dd9301f29
 }
 
 // Check for success message from session
@@ -325,7 +335,11 @@ if (empty($categorized_skills['Tool'])) {
                             <i class="fas fa-edit"></i>
                             Edit Profile
                         </button>
+<<<<<<< HEAD
                         <button class="btn btn-secondary js-download-profile" onclick="window.open('cv_print.php', '_blank'); return false;">
+=======
+                        <button class="btn btn-secondary js-download-profile">
+>>>>>>> c89e32f3b0aee1fe3295f9c3b861477dd9301f29
                             <i class="fas fa-download"></i>
                             Download CV
                         </button>
@@ -625,6 +639,7 @@ if (empty($categorized_skills['Tool'])) {
     </main>
 
     <!-- Edit Profile Modal -->
+<<<<<<< HEAD
     <div class="modal" id="edit-profile-modal">
         <div class="modal-backdrop"></div>
         <div class="modal-content modal-large">
@@ -677,10 +692,50 @@ if (empty($categorized_skills['Tool'])) {
                     </div>
                 </form>
             </div>
+=======
+<div class="modal" id="edit-profile-modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h3>Edit Profile</h3>
+            <button class="btn btn-primary js-edit-profile">
+                <i class="fas fa-edit"></i>
+                 Edit Profile
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="edit-profile-form" class="edit-form" method="POST" action="profile.php">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-first-name" class="form-label">First Name</label>
+                        <input type="text" id="edit-first-name" name="first_name" class="form-input" 
+                               value="<?php echo htmlspecialchars($user['first_name'] ?? ''); ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-last-name" class="form-label">Last Name</label>
+                        <input type="text" id="edit-last-name" name="last_name" class="form-input" 
+                               value="<?php echo htmlspecialchars($user['last_name'] ?? ''); ?>">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="edit-bio" class="form-label">Bio</label>
+                    <textarea id="edit-bio" name="bio" class="form-textarea" rows="4"><?php 
+                        echo htmlspecialchars($profile['bio'] ?? ''); 
+                    ?></textarea>
+                </div>
+                <!-- Rest of your form fields -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
+                    <button type="submit" name="update_profile" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+>>>>>>> c89e32f3b0aee1fe3295f9c3b861477dd9301f29
         </div>
     </div>
+</div>>
 
     <!-- Edit Skills Modal -->
+<<<<<<< HEAD
     <div class="modal" id="edit-skills-modal">
         <div class="modal-backdrop"></div>
         <div class="modal-content modal-large">
@@ -735,7 +790,45 @@ if (empty($categorized_skills['Tool'])) {
                                     <!-- No frameworks skills yet -->
                                 <?php endif; ?>
                             </div>
+=======
+<div class="modal" id="edit-skills-modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h3>Edit Skills & Technologies</h3>
+            <button class="modal-close" aria-label="Close modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="edit-skills-form" class="edit-form" method="POST" action="profile.php">
+                <div class="skills-edit-section">
+                    <div class="form-group">
+                        <label class="form-label">Programming Languages</label>
+                        <div class="skills-input-container">
+                            <select id="skill-programming-select" class="form-input">
+                                <option value="">Select a programming language</option>
+                                <?php foreach ($all_skills as $skill): 
+                                    if ($skill['category'] == 'Programming Language'): ?>
+                                    <option value="<?php echo htmlspecialchars($skill['skill_name']); ?>">
+                                        <?php echo htmlspecialchars($skill['skill_name']); ?>
+                                    </option>
+                                <?php endif; endforeach; ?>
+                            </select>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="addSkillFromSelect('programming')">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
                         </div>
+                        <div class="skills-tags-container" id="programming-tags-container">
+                            <?php foreach ($categorized_skills['Programming Language'] as $skill): ?>
+                                <input type="hidden" name="programming_skills[]" value="<?php echo htmlspecialchars($skill); ?>">
+                                <span class="skill-tag"><?php echo htmlspecialchars($skill); ?> 
+                                    <i class="fas fa-times" onclick="removeSkill(this, 'programming')"></i>
+                                </span>
+                            <?php endforeach; ?>
+>>>>>>> c89e32f3b0aee1fe3295f9c3b861477dd9301f29
+                        </div>
+                    </div>
 
                         <div class="form-group">
                             <label class="form-label">Tools & Platforms</label>

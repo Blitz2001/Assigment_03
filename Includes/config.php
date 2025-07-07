@@ -12,12 +12,15 @@ try {
     die("Connection failed: " . $e->getMessage());
 }
 
+<<<<<<< HEAD
 // Add MySQLi connection for compatibility
 $conn = new mysqli($db_server, $db_user, $db_pass, $db_name);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+=======
+>>>>>>> c89e32f3b0aee1fe3295f9c3b861477dd9301f29
 function redirect($url) {
     header("Location: $url");
     exit();
@@ -26,6 +29,9 @@ function redirect($url) {
 function sanitizeInput($data) {
     return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
 }
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> c89e32f3b0aee1fe3295f9c3b861477dd9301f29
 ?>

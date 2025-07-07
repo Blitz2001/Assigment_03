@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Attach event listeners to buttons
     attachButtonHandlers();
+<<<<<<< HEAD
 
     // Social Links Edit Button
     const editSocialBtn = document.querySelector('.js-edit-social');
@@ -17,6 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('edit-social-modal').classList.add('active');
         });
     }
+=======
+>>>>>>> c89e32f3b0aee1fe3295f9c3b861477dd9301f29
 });
 
 // ===== AUTHENTICATION CHECK =====
@@ -52,6 +55,57 @@ function attachButtonHandlers() {
     }
 
     // Save buttons are handled by form submission to PHP
+
+    // Download Profile Button
+    const downloadProfileBtn = document.querySelector('.js-download-profile');
+    if (downloadProfileBtn) {
+        downloadProfileBtn.addEventListener('click', downloadProfile);
+    }
+
+    // Logout Button
+    const logoutBtn = document.querySelector('.js-logout');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
+}
+
+// ===== BUTTON HANDLERS =====
+function attachButtonHandlers() {
+    // Edit Profile Button
+    const editProfileBtn = document.querySelector('.js-edit-profile');
+    if (editProfileBtn) {
+        editProfileBtn.addEventListener('click', editProfile);
+    }
+
+    // Edit Skills Button
+    const editSkillsBtn = document.querySelector('.js-edit-skills');
+    if (editSkillsBtn) {
+        editSkillsBtn.addEventListener('click', editSkills);
+    }
+
+    // Edit Academic Button
+    const editAcademicBtn = document.querySelector('.js-edit-academic');
+    if (editAcademicBtn) {
+        editAcademicBtn.addEventListener('click', editAcademicInfo);
+    }
+
+    // Edit Bio Button
+    const editBioBtn = document.querySelector('.js-edit-bio');
+    if (editBioBtn) {
+        editBioBtn.addEventListener('click', editBio);
+    }
+
+    // Save Profile Button
+    const saveProfileBtn = document.querySelector('.js-save-profile');
+    if (saveProfileBtn) {
+        saveProfileBtn.addEventListener('click', saveProfile);
+    }
+
+    // Save Skills Button
+    const saveSkillsBtn = document.querySelector('.js-save-skills');
+    if (saveSkillsBtn) {
+        saveSkillsBtn.addEventListener('click', saveSkills);
+    }
 
     // Download Profile Button
     const downloadProfileBtn = document.querySelector('.js-download-profile');
@@ -172,6 +226,7 @@ function initializeEditModals() {
             e.stopPropagation();
         });
     });
+<<<<<<< HEAD
 
     // Close modal when clicking on backdrop
     document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
@@ -192,6 +247,8 @@ function initializeEditModals() {
             }
         }
     });
+=======
+>>>>>>> c89e32f3b0aee1fe3295f9c3b861477dd9301f29
 }
 
 // PROFILE EDIT FUNCTIONS
@@ -200,7 +257,37 @@ function editProfile() {
     document.getElementById('edit-profile-modal').classList.add('active');
 }
 
+<<<<<<< HEAD
 // Profile form will submit directly to PHP, no JavaScript save needed
+=======
+function saveProfile() {
+    const form = document.getElementById('edit-profile-form');
+    const formData = new FormData(form);
+
+    // Get current profile data
+    const profileData = JSON.parse(localStorage.getItem('profile_data') || '{}');
+
+    // Update with form data
+    profileData.firstName = formData.get('first_name') || profileData.firstName;
+    profileData.lastName = formData.get('last_name') || profileData.lastName;
+    profileData.bio = formData.get('bio') || profileData.bio;
+    profileData.phone = formData.get('phone') || profileData.phone;
+    profileData.location = formData.get('location') || profileData.location;
+    profileData.birthday = formData.get('date_of_birth') || profileData.birthday;
+
+    // Save updated data
+    localStorage.setItem('profile_data', JSON.stringify(profileData));
+
+    // Update display
+    updateProfileDisplay(profileData);
+
+    // Hide modal
+    document.getElementById('edit-profile-modal').classList.remove('active');
+
+    // Show success message
+    showNotification('Profile updated successfully!', 'success');
+}
+>>>>>>> c89e32f3b0aee1fe3295f9c3b861477dd9301f29
 
 // SKILLS EDIT FUNCTIONS
 function editSkills() {
@@ -332,8 +419,25 @@ function editAcademicInfo() {
 }
 
 function editBio() {
+<<<<<<< HEAD
     // Show the edit profile modal for bio editing
     document.getElementById('edit-profile-modal').classList.add('active');
+=======
+    const currentBio = document.getElementById('bio-text').textContent;
+    const newBio = prompt('Edit your bio:', currentBio);
+
+    if (newBio !== null && newBio.trim() !== '') {
+        // Update display
+        document.getElementById('bio-text').textContent = newBio;
+
+        // Save to profile data
+        const profileData = JSON.parse(localStorage.getItem('profile_data') || '{}');
+        profileData.bio = newBio;
+        localStorage.setItem('profile_data', JSON.stringify(profileData));
+
+        showNotification('Bio updated successfully!', 'success');
+    }
+>>>>>>> c89e32f3b0aee1fe3295f9c3b861477dd9301f29
 }
 
 // ===== PROFILE ACTIONS =====
