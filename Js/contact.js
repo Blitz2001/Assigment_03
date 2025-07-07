@@ -1,6 +1,5 @@
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Message character count
+    // Character counter for message field
     const messageTextarea = document.getElementById('message');
     const charCount = document.getElementById('char-count');
     
@@ -9,22 +8,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentLength = this.value.length;
             charCount.textContent = currentLength;
             
-            // Validate minimum length
             if (currentLength < 10) {
-                this.classList.add('error');
-                const errorMsg = this.nextElementSibling.querySelector('.error-message') || 
-                                document.createElement('small');
-                errorMsg.className = 'error-message';
-                errorMsg.textContent = 'Message must be at least 10 characters';
-                if (!this.nextElementSibling.querySelector('.error-message')) {
-                    this.nextElementSibling.appendChild(errorMsg);
-                }
+                showFieldError(this, 'Message must be at least 10 characters');
             } else {
-                this.classList.remove('error');
-                const errorMsg = this.nextElementSibling.querySelector('.error-message');
-                if (errorMsg) {
-                    errorMsg.remove();
-                }
+                clearFieldError(this);
             }
         });
     }
@@ -35,165 +22,153 @@ document.addEventListener('DOMContentLoaded', function() {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Validate message length
-            const message = messageTextarea.value;
-            if (message.length < 10) {
-                showError(messageTextarea, 'Message must be at least 10 characters');
-                return;
-            }
+            // Validate form before submission
+            const isValid = validateForm();
+            if (!isValid) return;
             
             // Show loading state
             const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
             
-            // Collect form data
+            // Get form data
             const formData = new FormData(this);
             
             // Send AJAX request
-            fetch(this.action, {
+            fetch('contact.php', {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Show success message
-                    showSuccessMessage('Message sent successfully!');
-                    // Reset form
-                    this.reset();
-                    // Reset character count
+                    showMessage('success', data.message);
+                    contactForm.reset();
                     if (charCount) charCount.textContent = '0';
+                    
+                    // Reset ratings
+                    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                        radio.checked = false;
+                    });
                 } else {
-                    // Show error message
-                    if (data.message) {
-                        showError(null, data.message);
-                    }
-                    // Show field errors
+                    showMessage('error', data.message);
+                    
+                    // Display field errors
                     if (data.errors) {
-                        for (const [field, error] of Object.entries(data.errors)) {
+                        Object.entries(data.errors).forEach(([field, error]) => {
                             const input = document.querySelector(`[name="${field}"]`);
                             if (input) {
-                                showError(input, error);
+                                showFieldError(input, error);
                             }
-                        }
+                        });
                     }
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                showError(null, 'An error occurred. Please try again.');
+                showMessage('error', 'An error occurred. Please try again.');
             })
             .finally(() => {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+                submitBtn.innerHTML = originalBtnText;
             });
         });
     }
 
-    // Star rating interaction
-    const starRating = document.getElementById('experience-rating');
-    if (starRating) {
-        const stars = starRating.querySelectorAll('input[type="radio"]');
-        const ratingText = document.getElementById('rating-text');
+    // Form validation
+    function validateForm() {
+        let isValid = true;
+        const requiredFields = contactForm.querySelectorAll('[required]');
         
-        stars.forEach(star => {
-            star.addEventListener('change', function() {
-                const rating = this.value;
-                const ratings = {
-                    '1': 'Poor',
-                    '2': 'Fair',
-                    '3': 'Good',
-                    '4': 'Very Good',
-                    '5': 'Excellent'
-                };
-                ratingText.textContent = `You rated: ${ratings[rating]}`;
-            });
-        });
-    }
-
-    // Helper function to show error messages
-    function showError(input, message) {
-        if (input) {
-            const formGroup = input.closest('.form-group') || input.closest('.form-select');
-            if (formGroup) {
-                formGroup.classList.add('error');
-                
-                let errorElement = formGroup.querySelector('.error-message');
-                if (!errorElement) {
-                    errorElement = document.createElement('small');
-                    errorElement.className = 'error-message';
-                    formGroup.appendChild(errorElement);
-                }
-                errorElement.textContent = message;
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                showFieldError(field, 'This field is required');
+            } else if (field.id === 'message' && field.value.length < 10) {
+                isValid = false;
+                showFieldError(field, 'Message must be at least 10 characters');
             }
-        } else {
-            // Show general error message
-            alert(message);
+        });
+
+        return isValid;
+    }
+
+    // Show field error
+    function showFieldError(field, message) {
+        const formGroup = field.closest('.form-group') || field.closest('.form-select');
+        if (!formGroup) return;
+        
+        formGroup.classList.add('error');
+        let errorElement = formGroup.querySelector('.error-message');
+        if (!errorElement) {
+            errorElement = document.createElement('small');
+            errorElement.className = 'error-message';
+            formGroup.appendChild(errorElement);
+        }
+        errorElement.textContent = message;
+    }
+
+    // Clear field error
+    function clearFieldError(field) {
+        const formGroup = field.closest('.form-group') || field.closest('.form-select');
+        if (formGroup) {
+            formGroup.classList.remove('error');
+            const errorElement = formGroup.querySelector('.error-message');
+            if (errorElement) errorElement.remove();
         }
     }
 
-    // Helper function to show success message
-    function showSuccessMessage(message) {
-        // Create success modal if it doesn't exist
-        let successModal = document.getElementById('success-modal');
-        if (!successModal) {
-            successModal = document.createElement('div');
-            successModal.id = 'success-modal';
-            successModal.className = 'modal';
-            successModal.innerHTML = `
-                <div class="modal-backdrop"></div>
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>Success!</h3>
-                        <button class="modal-close" aria-label="Close modal">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="success-content">
-                            <div class="success-icon">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <p>${message}</p>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-primary modal-ok">OK</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(successModal);
-            
-            // Add event listeners for closing the modal
-            successModal.querySelectorAll('.modal-close, .modal-ok, .modal-backdrop').forEach(el => {
-                el.addEventListener('click', function() {
-                    successModal.style.display = 'none';
-                });
-            });
+    // Show message (success or error)
+    function showMessage(type, message) {
+        // Remove any existing messages
+        const existingMsg = document.querySelector('.form-message');
+        if (existingMsg) existingMsg.remove();
+        
+        // Create message element
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `form-message ${type}-message`;
+        
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        // Insert message
+        const formHeader = document.querySelector('.form-header');
+        if (formHeader) {
+            formHeader.appendChild(messageDiv);
+        } else {
+            contactForm.prepend(messageDiv);
         }
         
-        // Update message and show modal
-        successModal.querySelector('.modal-body p').textContent = message;
-        successModal.style.display = 'flex';
+        // Auto-remove message after 5 seconds
+        setTimeout(() => {
+            messageDiv.remove();
+        }, 5000);
     }
+
+    // Remove error state when user starts typing
+    document.querySelectorAll('#contact-form input, #contact-form textarea, #contact-form select').forEach(input => {
+        input.addEventListener('input', function() {
+            clearFieldError(this);
+        });
+    });
 
     // FAQ toggle functionality
     function toggleFAQ(button) {
         const faqItem = button.closest('.faq-item');
         const answer = faqItem.querySelector('.faq-answer');
-        
-        // Toggle the active class
         faqItem.classList.toggle('active');
-        
-        // Toggle the answer visibility
-        if (faqItem.classList.contains('active')) {
-            answer.style.maxHeight = answer.scrollHeight + 'px';
-            button.querySelector('i').className = 'fas fa-chevron-up';
-        } else {
-            answer.style.maxHeight = '0';
-            button.querySelector('i').className = 'fas fa-chevron-down';
-        }
+        answer.style.maxHeight = faqItem.classList.contains('active') ? answer.scrollHeight + 'px' : '0';
+        const icon = button.querySelector('i');
+        icon.classList.toggle('fa-chevron-down');
+        icon.classList.toggle('fa-chevron-up');
     }
     
     // Initialize FAQ items

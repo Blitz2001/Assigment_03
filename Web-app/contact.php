@@ -1,6 +1,109 @@
 <?php
-include './navbar.php';
+// Start PHP Backend Code
 require_once '../Includes/config.php';
+
+// Initialize variables
+$errors = [];
+$success = false;
+$is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+
+// Process form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get and sanitize form data
+    $first_name = trim($_POST['first_name'] ?? '');
+    $last_name = trim($_POST['last_name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $subject = trim($_POST['subject'] ?? '');
+    $priority = trim($_POST['priority'] ?? 'medium');
+    $message = trim($_POST['message'] ?? '');
+    $experience_rating = isset($_POST['experience_rating']) ? (int)$_POST['experience_rating'] : null;
+    $recommendation_score = isset($_POST['recommendation']) ? (int)$_POST['recommendation'] : null;
+    $wants_updates = isset($_POST['updates']) ? 1 : 0;
+    $wants_newsletter = isset($_POST['newsletter']) ? 1 : 0;
+    $user_id = $_SESSION['user_id'] ?? null;
+    
+    // Validate inputs
+    if (empty($first_name)) $errors['first_name'] = 'First name is required';
+    if (empty($last_name)) $errors['last_name'] = 'Last name is required';
+    if (empty($email)) {
+        $errors['email'] = 'Email is required';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Please enter a valid email address';
+    }
+    if (empty($subject)) $errors['subject'] = 'Subject is required';
+    if (empty($message)) {
+        $errors['message'] = 'Message is required';
+    } elseif (strlen($message) < 10) {
+        $errors['message'] = 'Message should be at least 10 characters long';
+    }
+
+    // If no errors, process the submission
+    if (empty($errors)) {
+        try {
+            $stmt = $conn->prepare("INSERT INTO contact_submissions 
+                                  (user_id, first_name, last_name, email, subject, priority, message, 
+                                   experience_rating, recommendation_score, wants_updates, wants_newsletter)
+                                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            
+            $stmt->bind_param("issssssiiii", 
+                $user_id,
+                $first_name,
+                $last_name,
+                $email,
+                $subject,
+                $priority,
+                $message,
+                $experience_rating,
+                $recommendation_score,
+                $wants_updates,
+                $wants_newsletter
+            );
+            
+            if ($stmt->execute()) {
+                $success = true;
+                
+                // Handle newsletter subscription
+                if ($wants_newsletter) {
+                    $newsletter_stmt = $conn->prepare("INSERT INTO newsletter_subscriptions 
+                                                      (email, user_id, is_active) 
+                                                      VALUES (?, ?, 1)
+                                                      ON DUPLICATE KEY UPDATE is_active = 1");
+                    $newsletter_stmt->bind_param("si", $email, $user_id);
+                    $newsletter_stmt->execute();
+                    $newsletter_stmt->close();
+                }
+            } else {
+                $errors['database'] = 'Error submitting your message. Please try again.';
+            }
+            
+            $stmt->close();
+        } catch (Exception $e) {
+            $errors['database'] = 'Database error: ' . $e->getMessage();
+        }
+    }
+    
+    // Handle AJAX response
+    if ($is_ajax) {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => $success,
+            'errors' => $errors,
+            'message' => $success ? 'Your message has been sent successfully!' : ($errors['database'] ?? 'Please correct the errors below')
+        ]);
+        exit;
+    }
+    
+    // Reset form on success for non-AJAX submission
+    if ($success && !$is_ajax) {
+        $first_name = $last_name = $email = $message = '';
+        $subject = $priority = '';
+        $experience_rating = $recommendation_score = null;
+        $wants_updates = $wants_newsletter = 0;
+    }
+}
+
+// Include navbar
+include './navbar.php';
 ?>
 
 <!DOCTYPE html>
@@ -139,11 +242,29 @@ require_once '../Includes/config.php';
                         <div class="form-header">
                             <h2>Send us a Message</h2>
                             <p>Fill out the form below and we'll get back to you as soon as possible.</p>
+                            
+                            <?php if ($success && !$is_ajax): ?>
+                                <div class="success-message">
+                                    <div class="success-content">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Your message has been sent successfully!</span>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <?php if (isset($errors['database']) && !$is_ajax): ?>
+                                <div class="error-message">
+                                    <div class="error-content">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        <span><?php echo htmlspecialchars($errors['database']); ?></span>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
                         </div>
 
-                        <form class="contact-form" id="contact-form" action="../Backend/contact.php" method="POST">
+                        <form class="contact-form" id="contact-form" method="POST">
                             <div class="form-row">
-                                <div class="form-group">
+                                <div class="form-group <?php echo isset($errors['first_name']) ? 'error' : ''; ?>">
                                     <label for="first_name" class="form-label">
                                         <i class="fas fa-user"></i>
                                         First Name *
@@ -155,10 +276,14 @@ require_once '../Includes/config.php';
                                         class="form-input"
                                         required
                                         placeholder="Your first name"
+                                        value="<?php echo htmlspecialchars($first_name ?? ''); ?>"
                                     >
+                                    <?php if (isset($errors['first_name'])): ?>
+                                        <small class="error-message"><?php echo htmlspecialchars($errors['first_name']); ?></small>
+                                    <?php endif; ?>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group <?php echo isset($errors['last_name']) ? 'error' : ''; ?>">
                                     <label for="last_name" class="form-label">
                                         <i class="fas fa-user"></i>
                                         Last Name *
@@ -170,11 +295,17 @@ require_once '../Includes/config.php';
                                         class="form-input"
                                         required
                                         placeholder="Your last name"
+                                        value="<?php echo htmlspecialchars($last_name ?? ''); ?>"
                                     >
+                                    <?php if (isset($errors['last_name'])): ?>
+                                        <small class="error-message"><?php echo htmlspecialchars($errors['last_name']); ?></small>
+                                    <?php endif; ?>
                                 </div>
-                            </div>
+                            </div> 
+                            
+                            <!-- end -->
 
-                            <div class="form-group">
+                            <div class="form-group <?php echo isset($errors['email']) ? 'error' : ''; ?>">
                                 <label for="email" class="form-label">
                                     <i class="fas fa-envelope"></i>
                                     Email Address *
@@ -186,24 +317,31 @@ require_once '../Includes/config.php';
                                     class="form-input"
                                     required
                                     placeholder="your.email@example.com"
+                                    value="<?php echo htmlspecialchars($email ?? ''); ?>"
                                 >
+                                <?php if (isset($errors['email'])): ?>
+                                    <small class="error-message"><?php echo htmlspecialchars($errors['email']); ?></small>
+                                <?php endif; ?>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group <?php echo isset($errors['subject']) ? 'error' : ''; ?>">
                                 <label for="subject" class="form-label">
                                     <i class="fas fa-tag"></i>
                                     Subject *
                                 </label>
                                 <select id="subject" name="subject" class="form-select" required>
                                     <option value="">Select a subject</option>
-                                    <option value="general">General Inquiry</option>
-                                    <option value="technical">Technical Support</option>
-                                    <option value="account">Account Issues</option>
-                                    <option value="feature">Feature Request</option>
-                                    <option value="bug">Bug Report</option>
-                                    <option value="billing">Billing Question</option>
-                                    <option value="other">Other</option>
+                                    <option value="general" <?php echo ($subject ?? '') === 'general' ? 'selected' : ''; ?>>General Inquiry</option>
+                                    <option value="technical" <?php echo ($subject ?? '') === 'technical' ? 'selected' : ''; ?>>Technical Support</option>
+                                    <option value="account" <?php echo ($subject ?? '') === 'account' ? 'selected' : ''; ?>>Account Issues</option>
+                                    <option value="feature" <?php echo ($subject ?? '') === 'feature' ? 'selected' : ''; ?>>Feature Request</option>
+                                    <option value="bug" <?php echo ($subject ?? '') === 'bug' ? 'selected' : ''; ?>>Bug Report</option>
+                                    <option value="billing" <?php echo ($subject ?? '') === 'billing' ? 'selected' : ''; ?>>Billing Question</option>
+                                    <option value="other" <?php echo ($subject ?? '') === 'other' ? 'selected' : ''; ?>>Other</option>
                                 </select>
+                                <?php if (isset($errors['subject'])): ?>
+                                    <small class="error-message"><?php echo htmlspecialchars($errors['subject']); ?></small>
+                                <?php endif; ?>
                             </div>
 
                             <div class="form-group">
@@ -212,14 +350,14 @@ require_once '../Includes/config.php';
                                     Priority Level
                                 </label>
                                 <select id="priority" name="priority" class="form-select">
-                                    <option value="low">Low - General question</option>
-                                    <option value="medium" selected>Medium - Standard inquiry</option>
-                                    <option value="high">High - Urgent issue</option>
-                                    <option value="critical">Critical - Service disruption</option>
+                                    <option value="low" <?php echo ($priority ?? '') === 'low' ? 'selected' : ''; ?>>Low - General question</option>
+                                    <option value="medium" <?php echo ($priority ?? 'medium') === 'medium' ? 'selected' : ''; ?>>Medium - Standard inquiry</option>
+                                    <option value="high" <?php echo ($priority ?? '') === 'high' ? 'selected' : ''; ?>>High - Urgent issue</option>
+                                    <option value="critical" <?php echo ($priority ?? '') === 'critical' ? 'selected' : ''; ?>>Critical - Service disruption</option>
                                 </select>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group <?php echo isset($errors['message']) ? 'error' : ''; ?>">
                                 <label for="message" class="form-label">
                                     <i class="fas fa-comment-alt"></i>
                                     Message *
@@ -232,10 +370,13 @@ require_once '../Includes/config.php';
                                     placeholder="Please describe your inquiry in detail..."
                                     rows="6"
                                     minlength="10"
-                                ></textarea>
+                                ><?php echo htmlspecialchars($message ?? ''); ?></textarea>
                                 <div class="character-count">
-                                    <span id="char-count">0</span> / 1000 characters
+                                    <span id="char-count"><?php echo strlen($message ?? ''); ?></span> / 1000 characters
                                 </div>
+                                <?php if (isset($errors['message'])): ?>
+                                    <small class="error-message"><?php echo htmlspecialchars($errors['message']); ?></small>
+                                <?php endif; ?>
                             </div>
 
                             <!-- Rating Section -->
@@ -246,30 +387,13 @@ require_once '../Includes/config.php';
                                 </label>
                                 <div class="rating-container">
                                     <div class="star-rating" id="experience-rating">
-                                        <input type="radio" id="star5" name="experience_rating" value="5">
-                                        <label for="star5" class="star">
-                                            <i class="fas fa-star"></i>
-                                        </label>
-
-                                        <input type="radio" id="star4" name="experience_rating" value="4">
-                                        <label for="star4" class="star">
-                                            <i class="fas fa-star"></i>
-                                        </label>
-
-                                        <input type="radio" id="star3" name="experience_rating" value="3">
-                                        <label for="star3" class="star">
-                                            <i class="fas fa-star"></i>
-                                        </label>
-
-                                        <input type="radio" id="star2" name="experience_rating" value="2">
-                                        <label for="star2" class="star">
-                                            <i class="fas fa-star"></i>
-                                        </label>
-
-                                        <input type="radio" id="star1" name="experience_rating" value="1">
-                                        <label for="star1" class="star">
-                                            <i class="fas fa-star"></i>
-                                        </label>
+                                        <?php for ($i = 5; $i >= 1; $i--): ?>
+                                            <input type="radio" id="star<?php echo $i; ?>" name="experience_rating" value="<?php echo $i; ?>"
+                                                <?php echo ($experience_rating ?? 0) == $i ? 'checked' : ''; ?>>
+                                            <label for="star<?php echo $i; ?>" class="star">
+                                                <i class="fas fa-star"></i>
+                                            </label>
+                                        <?php endfor; ?>
                                     </div>
                                     <div class="rating-text" id="rating-text">Click to rate your experience</div>
                                 </div>
@@ -288,37 +412,33 @@ require_once '../Includes/config.php';
                                             <span>Very likely</span>
                                         </div>
                                         <div class="scale-numbers">
-                                            <input type="radio" id="rec1" name="recommendation" value="1">
-                                            <label for="rec1">1</label>
-
-                                            <input type="radio" id="rec2" name="recommendation" value="2">
-                                            <label for="rec2">2</label>
-
-                                            <input type="radio" id="rec3" name="recommendation" value="3">
-                                            <label for="rec3">3</label>
-
-                                            <input type="radio" id="rec4" name="recommendation" value="4">
-                                            <label for="rec4">4</label>
-
-                                            <input type="radio" id="rec5" name="recommendation" value="5">
-                                            <label for="rec5">5</label>
-
-                                            <input type="radio" id="rec6" name="recommendation" value="6">
-                                            <label for="rec6">6</label>
-
-                                            <input type="radio" id="rec7" name="recommendation" value="7">
-                                            <label for="rec7">7</label>
-
-                                            <input type="radio" id="rec8" name="recommendation" value="8">
-                                            <label for="rec8">8</label>
-
-                                            <input type="radio" id="rec9" name="recommendation" value="9">
-                                            <label for="rec9">9</label>
-
-                                            <input type="radio" id="rec10" name="recommendation" value="10">
-                                            <label for="rec10">10</label>
+                                            <?php for ($i = 1; $i <= 10; $i++): ?>
+                                                <input type="radio" id="rec<?php echo $i; ?>" name="recommendation" value="<?php echo $i; ?>"
+                                                    <?php echo ($recommendation_score ?? 0) == $i ? 'checked' : ''; ?>>
+                                                <label for="rec<?php echo $i; ?>"><?php echo $i; ?></label>
+                                            <?php endfor; ?>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="updates" name="updates" value="1"
+                                        <?php echo ($wants_updates ?? 0) ? 'checked' : ''; ?>>
+                                    <label for="updates" class="checkbox-label">
+                                        I would like to receive updates about new features and improvements
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="newsletter" name="newsletter" value="1"
+                                        <?php echo ($wants_newsletter ?? 0) ? 'checked' : ''; ?>>
+                                    <label for="newsletter" class="checkbox-label">
+                                        Subscribe to our monthly newsletter
+                                    </label>
                                 </div>
                             </div>
 
@@ -339,7 +459,4 @@ require_once '../Includes/config.php';
 </body>
 </html>
 
-
-<?php
-include './footer.php';
-?>
+<?php include './footer.php'; ?>
