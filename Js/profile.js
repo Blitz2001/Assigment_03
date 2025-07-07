@@ -6,29 +6,64 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Check if user is logged in
     checkAuthStatus();
+
+    // Attach event listeners to buttons
+    attachButtonHandlers();
+
+    // Social Links Edit Button
+    const editSocialBtn = document.querySelector('.js-edit-social');
+    if (editSocialBtn) {
+        editSocialBtn.addEventListener('click', function() {
+            document.getElementById('edit-social-modal').classList.add('active');
+        });
+    }
 });
 
 // ===== AUTHENTICATION CHECK =====
 function checkAuthStatus() {
-    // In a real application, this would check session/token
-    const isLoggedIn = localStorage.getItem('user_logged_in') === 'true';
+    // Authentication is handled server-side by PHP sessions
+    // This function is kept for compatibility but not used
+}
 
-    if (!isLoggedIn) {
-        // Redirect to login page if not authenticated
-        showModal(
-            'Authentication Required',
-            'Please log in to access your profile.',
-            'info'
-        );
-
-        setTimeout(() => {
-            window.location.href = 'login.html';
-        }, 2000);
-        return;
+// ===== BUTTON HANDLERS =====
+function attachButtonHandlers() {
+    // Edit Profile Button
+    const editProfileBtn = document.querySelector('.js-edit-profile');
+    if (editProfileBtn) {
+        editProfileBtn.addEventListener('click', editProfile);
     }
 
-    // Load user profile data
-    loadProfileData();
+    // Edit Skills Button
+    const editSkillsBtn = document.querySelector('.js-edit-skills');
+    if (editSkillsBtn) {
+        editSkillsBtn.addEventListener('click', editSkills);
+    }
+
+    // Edit Academic Button
+    const editAcademicBtn = document.querySelector('.js-edit-academic');
+    if (editAcademicBtn) {
+        editAcademicBtn.addEventListener('click', editAcademicInfo);
+    }
+
+    // Edit Bio Button
+    const editBioBtn = document.querySelector('.js-edit-bio');
+    if (editBioBtn) {
+        editBioBtn.addEventListener('click', editBio);
+    }
+
+    // Save buttons are handled by form submission to PHP
+
+    // Download Profile Button
+    const downloadProfileBtn = document.querySelector('.js-download-profile');
+    if (downloadProfileBtn) {
+        downloadProfileBtn.addEventListener('click', downloadProfile);
+    }
+
+    // Logout Button
+    const logoutBtn = document.querySelector('.js-logout');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
 }
 
 // ===== PROFILE INITIALIZATION =====
@@ -41,97 +76,22 @@ function initializeProfile() {
 
     // Initialize profile actions
     initializeProfileActions();
-
-    // Load demo data if not logged in through proper flow
-    if (!localStorage.getItem('profile_data')) {
-        loadDemoProfileData();
-    }
 }
 
 // ===== PROFILE DATA MANAGEMENT =====
 function loadProfileData() {
-    const profileData = JSON.parse(localStorage.getItem('profile_data') || '{}');
-
-    if (Object.keys(profileData).length === 0) {
-        loadDemoProfileData();
-        return;
-    }
-
-    // Populate profile fields
-    updateProfileDisplay(profileData);
+    // Profile data is loaded server-side by PHP
+    // This function is kept for compatibility but not used
 }
 
 function loadDemoProfileData() {
-    const demoData = {
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@student.mit.edu',
-        phone: '+1 (555) 123-4567',
-        location: 'Cambridge, MA',
-        university: 'Massachusetts Institute of Technology',
-        studentId: 'MIT2024001',
-        major: 'Computer Science',
-        minor: 'Mathematics',
-        year: 'Senior (4th Year)',
-        graduation: 'May 2024',
-        advisor: 'Dr. Sarah Johnson',
-        bio: "I'm a passionate Computer Science student at MIT with a focus on artificial intelligence and machine learning. I enjoy working on innovative projects that solve real-world problems and am always eager to learn new technologies. In my free time, I contribute to open-source projects and participate in hackathons.",
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face',
-        birthday: 'March 15, 2001',
-        gpa: '3.8',
-        coursesCompleted: 12,
-        connections: 28,
-        daysActive: 156,
-        skills: {
-            programming: ['Python', 'JavaScript', 'Java', 'C++', 'TypeScript'],
-            frameworks: ['React', 'Node.js', 'Django', 'TensorFlow', 'Express.js'],
-            tools: ['Git', 'Docker', 'AWS', 'MongoDB', 'PostgreSQL']
-        }
-    };
-
-    localStorage.setItem('profile_data', JSON.stringify(demoData));
-    updateProfileDisplay(demoData);
+    // Demo data is not needed for PHP version
+    // This function is kept for compatibility but not used
 }
 
 function updateProfileDisplay(data) {
-    // Update header information
-    document.getElementById('profile-name').textContent = `${data.firstName} ${data.lastName}`;
-    document.getElementById('profile-title').textContent = `${data.major} Student`;
-    document.getElementById('profile-university').textContent = data.university;
-
-    // Update contact information
-    document.getElementById('contact-email').textContent = data.email;
-    document.getElementById('contact-phone').textContent = data.phone;
-    document.getElementById('contact-location').textContent = data.location;
-    document.getElementById('contact-birthday').textContent = data.birthday;
-
-    // Update academic information
-    document.getElementById('student-id').textContent = data.studentId;
-    document.getElementById('academic-year').textContent = data.year;
-    document.getElementById('major').textContent = data.major;
-    document.getElementById('minor').textContent = data.minor;
-    document.getElementById('graduation').textContent = data.graduation;
-    document.getElementById('advisor').textContent = data.advisor;
-
-    // Update bio
-    document.getElementById('bio-text').textContent = data.bio;
-
-    // Update avatar
-    if (data.avatar) {
-        document.getElementById('profile-avatar-img').src = data.avatar;
-    }
-
-    // Update stats
-    updateProfileStats(data);
-
-    // Update skills if they exist
-    if (data.skills) {
-        updateSkillsDisplay(
-            data.skills.programming || [],
-            data.skills.frameworks || [],
-            data.skills.tools || []
-        );
-    }
+    // This function is not needed for PHP version as data is populated server-side
+    // Keeping it for compatibility but it won't be used
 }
 
 function updateProfileStats(data) {
@@ -196,99 +156,61 @@ function handleAvatarUpload(event) {
 
 // ===== EDIT FUNCTIONALITY =====
 function initializeEditModals() {
-    // Profile modal close buttons
-    const editModal = document.getElementById('edit-profile-modal');
-    if (editModal) {
-        const closeButtons = editModal.querySelectorAll('.modal-close, .modal-cancel, .modal-backdrop');
-        closeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                editModal.classList.remove('active');
-            });
+    // Close buttons for all modals
+    document.querySelectorAll('.modal-close, .modal-cancel, .modal-backdrop').forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
         });
+    });
 
-        // Prevent modal from closing when clicking inside
-        editModal.querySelector('.modal-content').addEventListener('click', function(e) {
+    // Prevent modal content from closing when clicking inside
+    document.querySelectorAll('.modal-content').forEach(content => {
+        content.addEventListener('click', function(e) {
             e.stopPropagation();
         });
-    }
+    });
 
-    // Skills modal close buttons
-    const skillsModal = document.getElementById('edit-skills-modal');
-    if (skillsModal) {
-        const closeButtons = skillsModal.querySelectorAll('.modal-close, .modal-cancel, .modal-backdrop');
-        closeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                skillsModal.classList.remove('active');
-            });
+    // Close modal when clicking on backdrop
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+        backdrop.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
         });
+    });
 
-        // Prevent modal from closing when clicking inside
-        skillsModal.querySelector('.modal-content').addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-    }
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const activeModal = document.querySelector('.modal.active');
+            if (activeModal) {
+                activeModal.classList.remove('active');
+            }
+        }
+    });
 }
 
 // PROFILE EDIT FUNCTIONS
 function editProfile() {
-    const profileData = JSON.parse(localStorage.getItem('profile_data') || '{}');
-
-    // Populate edit form
-    document.getElementById('edit-first-name').value = profileData.firstName || '';
-    document.getElementById('edit-last-name').value = profileData.lastName || '';
-    document.getElementById('edit-bio').value = profileData.bio || '';
-    document.getElementById('edit-phone').value = profileData.phone || '';
-    document.getElementById('edit-location').value = profileData.location || '';
-    document.getElementById('edit-dob').value = profileData.birthday || '';
-
-    // Show modal
+    // Show modal - the form is already populated with PHP data
     document.getElementById('edit-profile-modal').classList.add('active');
 }
 
-function saveProfile() {
-    const form = document.getElementById('edit-profile-form');
-    const formData = new FormData(form);
-
-    // Get current profile data
-    const profileData = JSON.parse(localStorage.getItem('profile_data') || '{}');
-
-    // Update with form data
-    profileData.firstName = formData.get('first_name');
-    profileData.lastName = formData.get('last_name');
-    profileData.bio = formData.get('bio');
-    profileData.phone = formData.get('phone');
-    profileData.location = formData.get('location');
-    profileData.birthday = formData.get('date_of_birth');
-
-    // Save updated data
-    localStorage.setItem('profile_data', JSON.stringify(profileData));
-
-    // Update display
-    updateProfileDisplay(profileData);
-
-    // Hide modal
-    document.getElementById('edit-profile-modal').classList.remove('active');
-
-    // Show success message
-    showNotification('Profile updated successfully!', 'success');
-}
+// Profile form will submit directly to PHP, no JavaScript save needed
 
 // SKILLS EDIT FUNCTIONS
 function editSkills() {
-    const profileData = JSON.parse(localStorage.getItem('profile_data') || '{}');
-    const skills = profileData.skills || {
-        programming: [],
-        frameworks: [],
-        tools: []
-    };
-
-    // Populate the edit modal
-    populateSkillsContainer('programming', skills.programming || []);
-    populateSkillsContainer('frameworks', skills.frameworks || []);
-    populateSkillsContainer('tools', skills.tools || []);
-
-    // Show the modal
+    // Show the modal - skills are already populated with PHP data
     document.getElementById('edit-skills-modal').classList.add('active');
+    
+    // Debug: Check if containers exist
+    console.log('Programming container:', document.getElementById('programming-tags-container'));
+    console.log('Frameworks container:', document.getElementById('frameworks-tags-container'));
+    console.log('Tools container:', document.getElementById('tools-tags-container'));
 }
 
 function populateSkillsContainer(type, skills) {
@@ -309,105 +231,109 @@ function populateSkillsContainer(type, skills) {
 }
 
 function addSkill(type) {
+    console.log(`addSkill called with type: ${type}`);
     const input = document.getElementById(`skill-${type}-input`);
     const skill = input.value.trim();
     
+    console.log(`Input value: "${skill}"`);
+    
     if (skill) {
         const container = document.getElementById(`${type}-tags-container`);
-        const tag = document.createElement('div');
-        tag.className = 'editable-skill-tag';
+        
+        if (!container) {
+            console.error(`Container not found for type: ${type}`);
+            return;
+        }
+        
+        console.log(`Container found:`, container);
+        
+        // Create hidden input for form submission
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = `${type}_skills[]`;
+        hiddenInput.value = skill;
+        
+        // Create skill tag
+        const tag = document.createElement('span');
+        tag.className = 'skill-tag';
         tag.innerHTML = `
             ${skill}
-            <button onclick="removeSkill('${type}', this)">
-                <i class="fas fa-times"></i>
-            </button>
+            <i class="fas fa-times" onclick="removeSkill(this, '${type}')"></i>
         `;
+        
+        container.appendChild(hiddenInput);
         container.appendChild(tag);
         input.value = '';
+        
+        console.log(`Added skill: ${skill} to ${type}`);
+    } else {
+        console.log('No skill value provided');
     }
 }
 
-function removeSkill(type, button) {
-    button.parentElement.remove();
+function removeSkill(button, type) {
+    const tag = button.parentElement;
+    const container = tag.parentElement;
+    
+    // Find the corresponding hidden input that comes before this tag
+    let hiddenInput = null;
+    let currentElement = tag.previousElementSibling;
+    
+    // Look for the hidden input that comes before this tag
+    while (currentElement) {
+        if (currentElement.tagName === 'INPUT' && currentElement.name === `${type}_skills[]`) {
+            hiddenInput = currentElement;
+            break;
+        }
+        currentElement = currentElement.previousElementSibling;
+    }
+    
+    // Remove the hidden input if found
+    if (hiddenInput) {
+        hiddenInput.remove();
+    }
+    
+    // Remove the tag
+    tag.remove();
 }
 
-function saveSkills() {
-    // Get all skills from the modal
-    const programmingSkills = Array.from(document.getElementById('programming-tags-container').children)
-        .map(tag => tag.textContent.trim().replace('×', '').trim());
-    
-    const frameworksSkills = Array.from(document.getElementById('frameworks-tags-container').children)
-        .map(tag => tag.textContent.trim().replace('×', '').trim());
-    
-    const toolsSkills = Array.from(document.getElementById('tools-tags-container').children)
-        .map(tag => tag.textContent.trim().replace('×', '').trim());
-
-    // Update profile data
-    const profileData = JSON.parse(localStorage.getItem('profile_data') || '{}');
-    profileData.skills = {
-        programming: programmingSkills,
-        frameworks: frameworksSkills,
-        tools: toolsSkills
-    };
-
-    // Save to localStorage
-    localStorage.setItem('profile_data', JSON.stringify(profileData));
-
-    // Update the display
-    updateSkillsDisplay(programmingSkills, frameworksSkills, toolsSkills);
-
-    // Close the modal
-    document.getElementById('edit-skills-modal').classList.remove('active');
-
-    // Show success message
-    showNotification('Skills updated successfully!', 'success');
-}
+// Skills form will submit directly to PHP, no JavaScript save needed
 
 function updateSkillsDisplay(programming, frameworks, tools) {
     // Update programming languages
     const programmingContainer = document.querySelector('.skills-category:nth-child(1) .skills-list');
-    programmingContainer.innerHTML = programming.map(skill => 
-        `<span class="skill-tag">${skill}</span>`
-    ).join('');
+    if (programmingContainer) {
+        programmingContainer.innerHTML = programming.map(skill => 
+            `<span class="skill-tag">${skill}</span>`
+        ).join('');
+    }
 
     // Update frameworks
     const frameworksContainer = document.querySelector('.skills-category:nth-child(2) .skills-list');
-    frameworksContainer.innerHTML = frameworks.map(skill => 
-        `<span class="skill-tag">${skill}</span>`
-    ).join('');
+    if (frameworksContainer) {
+        frameworksContainer.innerHTML = frameworks.map(skill => 
+            `<span class="skill-tag">${skill}</span>`
+        ).join('');
+    }
 
     // Update tools
     const toolsContainer = document.querySelector('.skills-category:nth-child(3) .skills-list');
-    toolsContainer.innerHTML = tools.map(skill => 
-        `<span class="skill-tag">${skill}</span>`
-    ).join('');
+    if (toolsContainer) {
+        toolsContainer.innerHTML = tools.map(skill => 
+            `<span class="skill-tag">${skill}</span>`
+        ).join('');
+    }
 }
 
 // ===== SPECIFIC EDIT FUNCTIONS =====
 function editAcademicInfo() {
-    showModal(
-        'Edit Academic Information',
-        'Academic information editing would be implemented here with a detailed form.',
-        'info'
-    );
+    // Show the academic info modal
+    document.getElementById('edit-academic-modal').classList.add('active');
 }
 
 function editBio() {
-    const currentBio = document.getElementById('bio-text').textContent;
-
-    const newBio = prompt('Edit your bio:', currentBio);
-
-    if (newBio !== null && newBio.trim() !== '') {
-        // Update display
-        document.getElementById('bio-text').textContent = newBio;
-
-        // Save to profile data
-        const profileData = JSON.parse(localStorage.getItem('profile_data') || '{}');
-        profileData.bio = newBio;
-        localStorage.setItem('profile_data', JSON.stringify(profileData));
-
-        showNotification('Bio updated successfully!', 'success');
-    }
+    // Show the edit profile modal for bio editing
+    document.getElementById('edit-profile-modal').classList.add('active');
 }
 
 // ===== PROFILE ACTIONS =====
@@ -482,7 +408,7 @@ function logout() {
     setTimeout(() => {
         localStorage.removeItem('user_logged_in');
         localStorage.removeItem('profile_data');
-        window.location.href = 'index.html';
+        window.location.href = 'index.php';
     }, 2000);
 }
 

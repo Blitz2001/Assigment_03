@@ -13,18 +13,18 @@
                 <div class="footer-section">
                     <h4>Quick Links</h4>
                     <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="register.html">Register</a></li>
-                        <li><a href="login.html">Login</a></li>
-                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="index.php">Home</a></li>
+                        <li><a href="register.php">Register</a></li>
+                        <li><a href="login.php">Login</a></li>
+                        <li><a href="contact.php">Contact</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-section">
                     <h4>Features</h4>
                     <ul>
-                        <li><a href="#features">Profile Management</a></li>
-                        <li><a href="#features">Secure Login</a></li>
+                        <li><a href="profile.php">Profile Management</a></li>
+                        <li><a href="login.php">Secure Login</a></li>
                         <li><a href="#features">Mobile Support</a></li>
                         <li><a href="#features">Analytics</a></li>
                     </ul>
